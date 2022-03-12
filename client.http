@@ -1,16 +1,32 @@
 // dev
 @host = localhost
 // @host = 192.168.1.152
-@port = 8470
+@port = 8543
 @baseUri = https://{{host}}:{{port}}
 @uri = {{baseUri}}/api
 @contentType = application/json
-@apiKey = 5KmgFcy1X7bbcbtSuOtXEZXYslKyB0n3g3xRmCaaNsAwB9dhOpKuhZ04Mfr2OKGL
+@apiKey = uOtXEZXYslKyB0n3g3xRmCaaNsAwB5KmgFcy1X7bbcbtS9dhOpKuhZ04Mfr2OKGL
 
 ### ping
 // @name ping
 
 GET {{baseUri}}/ping HTTP/1.1
+Content-Type: {{contentType}}
+
+### secretApiKey
+// @name secretApiKey
+
+# TODO:
+### upload
+// @name upload
+
+POST {{uri}}/upload HTTP/1.1
+Content-Type: {{contentType}}
+Authorization: Bearer {{apiKey}}
+
+# curl -v -k -X POST https://127.0.0.1:8543/api/upload -H 'authorization: Bearer uOtXEZXYslKyB0n3g3xRmCaaNsAwB5KmgFcy1X7bbcbtS9dhOpKuhZ04Mfr2OKGL' -F "file=@someimage.png" | jq
+
+GET {{baseUri}}/secret-api-key HTTP/1.1
 Content-Type: {{contentType}}
 
 ### postFilter

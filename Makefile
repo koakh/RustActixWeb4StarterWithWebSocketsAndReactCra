@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 # default only here for wuick changes
-HTTP_SERVER_URI := 0.0.0.0:8470
+HTTP_SERVER_URI := 0.0.0.0:8543
 REACT_APP_PORT_WS := 8080
 # RUST_LOG := trace,actix_server=trace,actix_web=trace
 # RUST_LOG := debug,actix_server=debug,actix_web=debug
@@ -23,22 +23,9 @@ startServer:
 		CERT_FILE_NAME_CERT=$(CERT_FILE_NAME_CERT) \
 		cargo run -- start-server \
 			-i \
-			/var/log/docker/c3-microcloud-backend.log \
+			/var/log/zypper.log \
 			-f "^.*c3-.*.log$$" \
 			-l "(?i)(.*)"
-#		RUST_LOG=$(RUST_LOG) \
-#    cargo run -- \
-#			"start-server" \
-#			-i \
-#			"/var/log/docker/c3-microcloud-backend.log" \ 
-#			"/var/log/docker/c3-microcloud-cloud-client.log" \
-#			"/var/log/docker/c3-microcloud-frontend.log" \
-#			"/var/log/docker/c3-system-service-kiwix.log" \
-#			"/var/log/docker/c3-system-service-mongo.log" \
-#			"/var/log/docker/c3-system-service-syncthing.log" \
-#			-f "INPUT1" \
-#			-l "INPUT2"
-#			"(?i)(HttpModule)"
 
 startConfigServer:
 	@RUST_BACKTRACE=full \
@@ -50,7 +37,7 @@ startConfigServer:
     cargo run -- \
 			"start-server" \
 			"-c" \
-			"/etc/actixweb4-starter/config.json"
+			"./config/config.json"
 
 startConfigServerSudo:
 	@cargo build && \

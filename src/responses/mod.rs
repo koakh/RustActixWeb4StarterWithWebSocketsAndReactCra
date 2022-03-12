@@ -1,4 +1,5 @@
-mod ping_response;
+mod message_response;
+mod api_key_response;
 mod post_state_response;
 mod get_state_response;
 mod app_state_response;
@@ -6,7 +7,8 @@ mod post_ws_echo_response;
 mod error_message_response;
 mod backup_log_response;
 
-pub use ping_response::PingResponse;
+pub use message_response::MessageResponse;
+pub use api_key_response::ApiKeyResponse;
 pub use post_state_response::PostStateResponse;
 pub use app_state_response::AppStateResponse;
 pub use post_ws_echo_response::PostWsEchoResponse;

@@ -9,6 +9,17 @@
   },
   "cSpell.words": [
     "actix",
-    "actixweb"
+    "actixweb",
+    "chrono",
+    "httpauth",
+    "Kiwix",
+    "linemux",
+    "microcloud",
+    "Muxed",
+    "pathbuf",
+    "Postbackup",
+    "rsyslog",
+    "structopt",
+    "syncthing"
   ]
 }

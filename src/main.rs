@@ -14,6 +14,9 @@ use actix_web_actors::ws;
 use actix_web_httpauth::extractors::bearer::{BearerAuth, Config};
 use actix_web_httpauth::extractors::AuthenticationError;
 use actix_web_httpauth::middleware::HttpAuthentication;
+use actixweb4_starter::app::HTTP_SERVER_KEEP_ALIVE;
+use actixweb4_starter::responses::ApiKeyResponse;
+use actixweb4_starter::server::{health_check, redirect, not_found};
 use linemux::MuxedLines;
 use log::{debug, error, info};
 use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
@@ -39,24 +42,20 @@ use actixweb4_starter::{
   app::{
     config::ConfigItem, init_log4rs, AppState, AppStateGlobal, Cli, ConfigState, APP_NAME, CONFIG_FILE_PATH, DEFAULT_CERT_FILE_NAME_CERT, DEFAULT_CERT_FILE_NAME_KEY, DEFAULT_CONFIG_PATH_SSL,
     DEFAULT_FILTER_FILE, DEFAULT_FILTER_LINE, DEFAULT_HTTP_SERVER_URI, DOWNLOAD_FILES_PATH, DOWNLOAD_URI_PATH, DOWNLOAD_URI_PATH_ABSOLUTE, FORMAT_DATE_TIME_FILE_NAME, HTTP_SERVER_API_KEY,
+    RANDOM_STRING_GENERATOR_CHARSET, RANDOM_STRING_GENERATOR_SIZE,
   },
   enums::MessageToClientType,
   requests::{PostStateRequest, PostWsEchoRequest, PostbackupLogRequest},
-  responses::{AppStateResponse, BackupLogResponse, ErrorMessageResponse, GetStateResponse, PingResponse, PostStateResponse, PostWsEchoResponse},
+  responses::{AppStateResponse, BackupLogResponse, ErrorMessageResponse, GetStateResponse, MessageResponse, PostStateResponse, PostWsEchoResponse},
+  server::upload,
   util::{
-    execute_command, execute_command_shortcut, get_config_files_from_regex, get_config_item, get_config_state, get_current_formatted_date, out_message, pathbuf_to_str, read_config, read_generic_type,
-    ExecuteCommandOutcome,
+    execute_command, execute_command_shortcut, generate_random_string, get_config_files_from_regex, get_config_item, get_config_state, get_current_formatted_date, out_message, pathbuf_to_str,
+    read_config, read_generic_type, ExecuteCommandOutcome,
   },
   websocket::{ws_index, MessageToClient, Server as WebServer},
 };
 
 static SERVER_COUNTER: AtomicUsize = AtomicUsize::new(0);
-
-/// GET:/ping
-#[get("/ping")]
-async fn health_check(_: HttpRequest) -> Result<web::Json<PingResponse>> {
-  Ok(web::Json(PingResponse { message: "pong".to_string() }))
-}
 
 /// POST:/ws-echo
 #[post("/ws-echo")]
@@ -156,7 +155,7 @@ async fn post_state(msg: web::Json<PostStateRequest>, data: web::Data<AppState>,
   let request_count = data.request_count.get() + 1;
   data.request_count.set(request_count);
 
-  // output chaneged filters: leave stdout clean for output filtered log lines only
+  // output changed filters: leave stdout clean for output filtered log lines only
   // out_message(format!("filters changed file: {}, line: {}", &msg.filter_file, &msg.filter_line), 0);
 
   HttpResponse::Ok().json(PostStateResponse {
@@ -296,7 +295,7 @@ async fn main() -> std::io::Result<()> {
   // init log4rs
   init_log4rs().expect("can't initialize logger");
 
-  // default config, must be implicit overrided
+  // default config, must be implicit override
   let mut config = ConfigState {
     filter_file: Rc::new(RefCell::new(Some(String::from(DEFAULT_FILTER_FILE)))),
     filter_line: Rc::new(RefCell::new(Some(String::from(DEFAULT_FILTER_LINE)))),
@@ -330,7 +329,7 @@ async fn main() -> std::io::Result<()> {
     } => {
       // use files and filters: priority is the files and filters
       if !input_files.is_empty() {
-        // override deffult config
+        // override default config
         config.filter_file = Rc::new(RefCell::new(Some(String::from(filter_file))));
         config.filter_line = Rc::new(RefCell::new(Some(String::from(filter_line))));
         config.input_files = Rc::new(RefCell::new(Some(input_files.to_vec())));
@@ -481,10 +480,13 @@ async fn main() -> std::io::Result<()> {
       // webSockets: TRICK /ws/ route must be before / and others to prevent problems
       .service(web::resource("/ws/").route(web::get().to(ws_index)))
       .service(health_check)
+      .service(redirect)
+      // disabled
+      // .service(api_key)
       // we allow the visitor to see an index of the images at `/downloads`.
-      // .service(Files::new(format!("/{}", DOWNLOAD_FILES_PATH).as_str(), format!("static/{}", DOWNLOAD_FILES_PATH).as_str()).show_files_listing())      
+      .service(Files::new(format!("/{}", DOWNLOAD_FILES_PATH).as_str(), format!("static/{}", DOWNLOAD_FILES_PATH).as_str()).show_files_listing())
       // without see an index of the images at `/downloads`.
-      .service(Files::new(format!("{}", DOWNLOAD_URI_PATH).as_str(), format!("{}", DOWNLOAD_FILES_PATH).as_str()))      
+      .service(Files::new(format!("{}", DOWNLOAD_URI_PATH).as_str(), format!("{}", DOWNLOAD_FILES_PATH).as_str()))
       // scoped
       .service(
         web::scope("/api")
@@ -495,13 +497,16 @@ async fn main() -> std::io::Result<()> {
           .service(post_state)
           .service(get_config)
           .service(post_backup_log)
-          // .service(ws_echo)
-          // .route("/{name}", web::get().to(greet))
-          // static, leave / route to the end, else it overrides all others
-          // .route("/", web::get().to(greet)),
+          .service(upload),
+        // .service(ws_echo)
+        // .route("/{name}", web::get().to(greet))
+        // static, leave / route to the end, else it overrides all others
+        // .route("/", web::get().to(greet)),
       )
+      .default_service(web::route().to(not_found))
   })
   // .workers(2)
+  .keep_alive(Duration::from_secs(HTTP_SERVER_KEEP_ALIVE))
   // .bind(http_server_uri)?
   .bind_openssl(http_server_uri, builder)?
   .run()

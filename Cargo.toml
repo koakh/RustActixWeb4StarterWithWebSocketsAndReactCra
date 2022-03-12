@@ -35,16 +35,25 @@ actix-files = "0.6.0"
 serde = { version = "1.0.136", features = ["derive", "rc"] }
 serde_json = "1.0.79"
 serde_derive = "1.0.136"
+derive_more = "0.99.17"
 # regex
 regex = "1.5.5"
+# uuid
 uuid = { version = "0.8.2", features = ["serde", "v4"] }
-derive_more = "0.99.17"
 # https
 openssl = "0.10.38"
 # datetime
 chrono = "0.4.19"
 # log
 log4rs = "1.0.0"
+# random
+rand = "0.8.5"
+# multipart upload
+actix-multipart = "0.4.0"
+sanitize-filename = "0.3"
+futures-util = { version = "0.3.21", default-features = false, features = ["std"] }
+# mime types
+mime = "0.3.16"
 
 [package.metadata.deb]
 maintainer-scripts = "debian/"

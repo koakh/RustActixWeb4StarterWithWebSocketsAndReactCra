@@ -216,7 +216,7 @@ solution we must wrap everything with Data::new() ex
 
 ## React HTTPS : `ERR_CERT_AUTHORITY_INVALID`
 
-the trick is open https url on chrome or chrome debugger at <https://192.168.1.120:8470/>, and accept certificate like we do normally with advance in invalid certificates, and it start to work in chrome debug mode, and in non chrome debugger.
+the trick is open https url on chrome or chrome debugger at <https://192.168.1.120:8543/>, and accept certificate like we do normally with advance in invalid certificates, and it start to work in chrome debug mode, and in non chrome debugger.
 
 ## Custom React Compnent
 

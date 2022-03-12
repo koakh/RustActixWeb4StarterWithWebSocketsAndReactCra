@@ -10,6 +10,7 @@ use std::fs::File;
 use std::io::Read;
 use std::path::{Path, PathBuf};
 use std::sync::MutexGuard;
+use rand::Rng;
 
 /// generate a fixed size char line
 pub fn gen_line_char(character: char, width: u8) -> String {
@@ -159,4 +160,19 @@ pub fn get_config_files_from_regex(config: &ConfigState, regex: Regex) -> Option
   } else {
     Some(result.trim_start().to_string())
   }
+}
+
+// https://rust-lang-nursery.github.io/rust-cookbook/algorithms/randomness.html
+// Create random passwords from a set of user-defined characters
+pub fn generate_random_string(seed: &[u8], size: usize) -> String {
+  let mut rng = rand::thread_rng();
+
+  let password: String = (0..size)
+      .map(|_| {
+          let idx = rng.gen_range(0..seed.len());
+          seed[idx] as char
+      })
+      .collect();
+
+  password
 }

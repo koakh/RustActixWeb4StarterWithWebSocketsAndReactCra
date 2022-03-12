@@ -11,7 +11,7 @@ pub struct AppState {
   // Mutex is necessary to mutate safely across threads
   pub server_id: usize,
   // worker, used for every thread/workers
-  pub request_count: Cell<usize>,
+  pub request_count: Cell<usize>,  
 }
 
 #[derive(Debug)]

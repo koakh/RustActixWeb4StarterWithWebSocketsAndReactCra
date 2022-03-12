@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct PingResponse {
+pub struct MessageResponse {
   pub message: String,
 }
