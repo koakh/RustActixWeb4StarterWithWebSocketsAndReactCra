@@ -1,8 +1,10 @@
 Project:
   service:
+    ☐ @critical create server dir/mod with server stuff and handlers, try to clean up main file
     ✔ add random key endpoint @done(22-03-12 19:11)
-    ☐ must use random key endpoint in ccp to prevent c++ hack/disassbler
     ✔ add multipart upload from rpi http server @done(22-03-12 23:05)
     ✔ add all new stuff from deadpool like time, redirect, 404 endpoint @done(22-03-12 23:41)
-    ☐ create server dir/mod with server stuff and handlers, try to clean up main file
+    ☐ added upload to client.http from c3-backend
+    ☐ must use random key endpoint in ccp to prevent c++ hack/disassbler
     ☐ add react cra
+    ☐ add postgres SeaOrm or dead pool to work with citizen card
