@@ -1,0 +1,35 @@
+[Unit]
+Description=Critical Links actixweb4-starter
+
+[Service]
+Type=simple
+ExecStart=/usr/share/actixweb4-starter/actixweb4-starter start-server -c /etc/actixweb4-starter/config.json
+WorkingDirectory=/usr/share/actixweb4-starter
+Restart=always
+# ExecStartPre=/bin/sleep 5
+
+# Only kill the main process, do not kill the /usr/lib/backend/* programs.
+KillMode=process
+
+#User=nobody
+#Group=nogroup
+
+# Environment variables:
+# override defaults
+# Environment=LOG_DEFAULT_LEVEL=DEBUG
+# Environment=LOGFILE_DEFAULT_LEVEL=DEBUG
+
+# Allow many incoming connections
+LimitNOFILE=infinity
+
+# Allow core dumps for debugging
+LimitCORE=infinity
+
+# if enable output will be redirected to syslog
+# StandardInput=null
+# dont' write to syslog, this will create some issues, and create some flood on syslog file
+# StandardOutput=syslog
+# StandardError=syslog
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,76 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    // working configuration with sudo -u c3 use `make startConfigServerSudo`
+    // operation not permited, execute `echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope`
+    {
+      "type": "lldb",
+      "request": "attach",
+      "name": "Attach to executable 'actixweb4-starter'",
+      "program": "${workspaceFolder}/target/debug/actixweb4-starter",
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug executable 'actixweb4-starter'",
+      "cargo": {
+        "args": [
+          "build",
+          "--bin=actixweb4-starter",
+          "--package=actixweb4-starter"
+        ],
+        "filter": {
+          "name": "actixweb4-starter",
+          "kind": "bin"
+        }
+      },
+      "args": [
+        // "A=$(ls /var/log/docker/) && printf \"%s\n\" \"${A[@]}\"",
+        "start-server",
+        // config mode
+        "-c",
+        "/etc/actixweb4-starter/config.json",
+        // input files mode
+        // "-i",
+        // "/var/log/docker/c3-microcloud-backend.log",
+        // "/var/log/docker/c3-microcloud-cloud-client.log",
+        // "/var/log/docker/c3-microcloud-frontend.log",
+        // "/var/log/docker/c3-system-service-kiwix.log",
+        // "/var/log/docker/c3-system-service-mongo.log",
+        // "/var/log/docker/c3-system-service-syncthing.log",
+        // "/var/log/docker/docker.log",
+        // "-f",
+        // "^.*c3-.*\\.log$-INPUT-DEBUG",
+        // "-l",
+        // "(?i)(HttpModule)-INPUT-DEBUG",
+      ],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        // TRACE
+        "RUST_LOG": "trace,actix_server=debug,actix_web=debug"
+      },
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug unit tests in executable 'actixweb4-starter'",
+      "cargo": {
+        "args": [
+          "test",
+          "--no-run",
+          "--bin=actixweb4-starter",
+          "--package=actixweb4-starter"
+        ],
+        "filter": {
+          "name": "actixweb4-starter",
+          "kind": "bin"
+        }
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}

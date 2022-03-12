@@ -1,0 +1,120 @@
+{
+  "filterFile": "^.*c3-.*\\.log$",
+  "filterLine": "(?i)(.*)",
+  "inputFiles": [
+    "/var/log/syslog",
+    "/var/log/dmesg",
+    "/var/log/samba/samba.log",
+    "/var/log/monit.log",
+    "/var/log/squid/cache.log",
+    "/var/log/squid/access.log",
+    "/var/log/docker/c3-microcloud-backend.log",
+    "/var/log/docker/c3-microcloud-cloud-client.log",
+    "/var/log/docker/c3-microcloud-frontend.log",
+    "/var/log/docker/c3-system-service-kiwix.log",
+    "/var/log/docker/c3-system-service-mongo.log",
+    "/var/log/docker/c3-system-service-syncthing.log",
+    "/var/log/c3-system-core.log",
+    "/var/log/c3-updater.log"
+  ],
+  "configuration": [
+    {
+      "label": "All",
+      "key": "all",
+      "filterFile": "^.*.log$",
+      "filterLine": "(?i)(.*)"
+    },
+    {
+      "label": "Syslog",
+      "key": "syslog",
+      "filterFile": "^/var/log/syslog$",
+      "filterLine": "(?i)(.*)",
+      "startCommand": "sudo systemctl start syslog.socket rsyslog.service",
+      "stopCommand": "sudo systemctl stop syslog.socket rsyslog.service"
+    },
+    {
+      "label": "Dmesg",
+      "key": "dmesg",
+      "filterFile": "^/var/log/dmesg$",
+      "filterLine": "(?i)(.*)"
+    },
+    {
+      "label": "Samba",
+      "key": "samba",
+      "filterFile": "^/var/log/samba/samba.log$",
+      "filterLine": "(?i)(.*)"
+    },
+    {
+      "label": "Monit",
+      "key": "monit",
+      "filterFile": "^/var/log/monit.log$",
+      "filterLine": "(?i)(.*)"
+    },    
+    {
+      "label": "Squid All",
+      "key": "squid-all",
+      "filterFile": "^/var/log/squid/.*.log$",
+      "filterLine": "(?i)(.*)"
+    },
+    {
+      "label": "Squid Cache",
+      "key": "squid-cache",
+      "filterFile": "^/var/log/squid/cache.log$",
+      "filterLine": "(?i)(.*)"
+    },
+    {
+      "label": "Squid Access",
+      "key": "squid-access",
+      "filterFile": "^/var/log/squid/access.log$",
+      "filterLine": "(?i)(.*)"
+    },
+    {
+      "label": "C3 Microcloud Backend",
+      "key": "c3-microcloud-backend",
+      "filterFile": "^/var/log/docker/c3-microcloud-backend.log$",
+      "filterLine": "(?i)(.*)"
+    },
+    {
+      "label": "C3 Microcloud CloudClient",
+      "key": "c3-microcloud-cloud-client",
+      "filterFile": "^/var/log/docker/c3-microcloud-cloud-client.log$",
+      "filterLine": "(?i)(.*)"
+    },
+    {
+      "label": "C3 Microcloud Frontend",
+      "key": "c3-microcloud-frontend",
+      "filterFile": "^/var/log/docker/c3-microcloud-frontend.log$",
+      "filterLine": "(?i)(.*)"
+    },
+    {
+      "label": "C3 SystemService Kiwix",
+      "key": "c3-system-service-kiwix",
+      "filterFile": "^/var/log/docker/c3-system-service-kiwix.log$",
+      "filterLine": "(?i)(.*)"
+    },
+    {
+      "label": "C3 System Service Mongo",
+      "key": "c3-system-service-mongo",
+      "filterFile": "^/var/log/docker/c3-system-service-mongo.log$",
+      "filterLine": "(?i)(.*)"
+    },
+    {
+      "label": "C3 SystemService Syncthing",
+      "key": "c3-system-service-syncthing",
+      "filterFile": "^/var/log/docker/c3-system-service-syncthing.log$",
+      "filterLine": "(?i)(.*)"
+    },
+    {
+      "label": "C3 System Core",
+      "key": "c3-system-core",
+      "filterFile": "^/var/log/c3-system-core.log$",
+      "filterLine": "(?i)(.*)"
+    },
+    {
+      "label": "C3 Updater",
+      "key": "c3-updater",
+      "filterFile": "^/var/log/c3-updater.log$",
+      "filterLine": "(?i)(.*)"
+    }
+  ]
+}

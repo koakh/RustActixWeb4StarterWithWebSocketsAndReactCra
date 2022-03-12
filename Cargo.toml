@@ -1,0 +1,75 @@
+[package]
+name = "actixweb4-starter"
+version = "1.0.0"
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+# log
+log = "0.4.14"
+env_logger = "0.9.0"
+# tail
+tokio = { version = "1.17.0", features = ["full"] }
+# fix ^^^^^^^^^^^^^^^^^^ the trait `actix::actor::Actor` is not implemented for `WebSocketSession` when upgrade from actixweb 4 beta to release
+tokio-stream = "0.1.8"
+linemux = "0.2.3"
+# cli
+structopt = "0.3.26"
+# actix
+actix-web = { version = "4.0.1", features = ["openssl"] }
+# websockets"
+actix = "0.13.0"
+actix-web-actors = "4.1.0"
+actix-cors = "0.6.1"
+# httpauth
+# with bellow we must implement error.rs, with 0.6.0-beta.7 we don't need to implement it
+# Err(AuthenticationError::from(config).into())
+#                                       ^^^^ the trait `ResponseError` is not implemented for `AuthenticationError<actix_web_httpauth::headers::www_authenticate::bearer::Bearer>`
+# actix-web-httpauth = "0.5.1"
+actix-web-httpauth = "0.6.0"
+# static files
+# actix-plus-static-files = {git="https://github.com/finnbear/actix-plus", branch="actix-web-4"}
+actix-files = "0.6.0"
+# serde
+serde = { version = "1.0.136", features = ["derive", "rc"] }
+serde_json = "1.0.79"
+serde_derive = "1.0.136"
+# regex
+regex = "1.5.5"
+uuid = { version = "0.8.2", features = ["serde", "v4"] }
+derive_more = "0.99.17"
+# https
+openssl = "0.10.38"
+# datetime
+chrono = "0.4.19"
+# log
+log4rs = "1.0.0"
+
+[package.metadata.deb]
+maintainer-scripts = "debian/"
+maintainer = "Mario Monteiro <mario.monteiro@critical-links.com>"
+copyright = "2021, Critical-Links.com <mail@critical-links.com>"
+systemd-units = { enable = true }
+depends = "$auto"
+section = "utility"
+priority = "optional"
+# must be here, if is commented inside assets it will be used!!!
+# ["staticFiles/etc/ufw/applications.d/actixweb4-starter", "etc/ufw/applications.d/actixweb4-starter", "644"],
+assets = [
+  # second argument is where the file will be copied, if is argument ends with / it will be inferred that the target is the directory where the file will be copied.
+  ["target/release/actixweb4-starter", "usr/share/actixweb4-starter/actixweb4-starter", "755"],
+  ["config/ssl/*.pem", "usr/share/actixweb4-starter/config/ssl/", "644"],
+  ["README", "usr/share/actixweb4-starter/README", "644"],
+  ["config/config.json", "etc/actixweb4-starter/config.json", "644"],
+]
+# disabled, now we always replace config in updates
+# define as config file, this files will not be replaced by re-installation
+# conf-files = [
+#   "/etc/actixweb4-starter/config.json"
+# ]
+extended-description = """\
+A systemd service to ingest and propgate system logs to websocket clients.\
+Rest api, websockets and react frontend."""
+# license=""
+# license-file = ["LICENSE", "4"]

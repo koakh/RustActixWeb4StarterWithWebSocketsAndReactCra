@@ -1,0 +1,14 @@
+{
+  "peacock.remoteColor": "#aab002",
+  "files.watcherExclude": {
+    "**/.dart_tool": true,
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/*/**": true,
+    ".flatpak": true
+  },
+  "cSpell.words": [
+    "actix",
+    "actixweb"
+  ]
+}

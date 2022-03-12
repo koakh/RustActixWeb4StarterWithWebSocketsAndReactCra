@@ -1,0 +1,16 @@
+Project:
+  service:
+    ✔ add https/tls @done(22-01-14 12:09)
+    ✔ cors @done(22-01-14 12:09)
+    ✔ add all endpoints to client.http @done(22-01-14 12:19)
+    ✔ move all responders and models to folders @done(22-01-14 17:03)
+    ✔ use out_message everywhere where println is @done(22-01-14 17:19)
+    ✔ @critical use config if exists else use args or fail @done(22-01-17 17:53)
+    ✔ test change on the fly filters @done(22-01-17 17:53)
+    ✔ args ex --config configfile @done(22-01-17 17:53)
+    ✔ use config.json ex args or files @done(22-01-17 17:53)
+    ✔ config use both filters @done(22-01-17 17:53)
+    ✔ /var/log/actixweb4-starter @done(22-01-26 10:49)
+
+remove serverId, counter, requestCount from filter request
+    let match_file_re = ref_regex_file.lock().unwrap().is_match(&line.source().display().to_string());

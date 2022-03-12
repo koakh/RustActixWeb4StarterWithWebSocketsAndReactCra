@@ -1,0 +1,13 @@
+# README
+
+Koakh actixweb4-starter / started from c3-system-tailor
+
+find: c3-system-tailor
+replace: actixweb4-starter
+
+find: c3_system_tailor
+replace: actixweb4_starter
+
+// pub const LOG_FILE_PATH: &'static str = "/var/log/actixweb4-starter.log";
+pub const LOG_FILE_PATH: &'static str = "/tmp/actixweb4-starter.log";
+

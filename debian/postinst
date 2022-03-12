@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# now we use it in iso because of some issues when iso call reload
+# # firewall
+# ufw allow actixweb4-starter
+# ufw reload
+
+# set -e
+
+# case "$1" in
+# configure)
+#     ufw allow actixweb4-starter
+#     ufw reload
+#     ;;
+# esac
+
+#DEBHELPER#
