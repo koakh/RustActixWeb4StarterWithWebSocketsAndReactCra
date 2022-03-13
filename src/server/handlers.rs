@@ -54,7 +54,7 @@ pub async fn upload(payload: Multipart) -> Result<HttpResponse, ActixError> {
     Ok(_) => Ok(HttpResponse::build(StatusCode::OK).json(MessageResponse {
       message: "successful upload".to_string(),
     })),
-    Err(_) => Ok(HttpResponse::build(StatusCode::NOT_FOUND).json(MessageResponse { message: "failed upload".to_string() })),
+    Err(e) => Ok(HttpResponse::build(StatusCode::NOT_FOUND).json(MessageResponse { message: format!("failed upload: {}", e) })),
   }
 }
 

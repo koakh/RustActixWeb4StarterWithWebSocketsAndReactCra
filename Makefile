@@ -27,6 +27,7 @@ startServer:
 			-f "^.*c3-.*.log$$" \
 			-l "(?i)(.*)"
 
+# prefered way
 startConfigServer:
 	@RUST_BACKTRACE=full \
     BIND_ADDR=0.0.0.0:$(REACT_APP_PORT_WS) \
