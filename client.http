@@ -15,16 +15,31 @@ Content-Type: {{contentType}}
 
 ### secretApiKey
 // @name secretApiKey
+// currently handler is disabled
 
-# TODO:
-### upload
-// @name upload
+GET {{baseUri}}/secret-api-key HTTP/1.1
+Content-Type: {{contentType}}
+
+### uploadFile
+// @name uploadFile
+
+# curl -v -k -X POST https://127.0.0.1:8543/api/upload -H 'authorization: Bearer uOtXEZXYslKyB0n3g3xRmCaaNsAwB5KmgFcy1X7bbcbtS9dhOpKuhZ04Mfr2OKGL' -F "file=@/home/mario/Desktop/Screenshot_1646442681.png" | jq
 
 POST {{uri}}/upload HTTP/1.1
-Content-Type: {{contentType}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
 Authorization: Bearer {{apiKey}}
 
-# curl -v -k -X POST https://127.0.0.1:8543/api/upload -H 'authorization: Bearer uOtXEZXYslKyB0n3g3xRmCaaNsAwB5KmgFcy1X7bbcbtS9dhOpKuhZ04Mfr2OKGL' -F "file=@someimage.png" | jq
+@dryRunFile = /home/mario/Desktop/Screenshot_1646442681.png
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="text"
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="{{dryRunFile}}"
+Content-Type: multipart/form-data
+
+< {{dryRunFile}}
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
 
 GET {{baseUri}}/secret-api-key HTTP/1.1
 Content-Type: {{contentType}}
