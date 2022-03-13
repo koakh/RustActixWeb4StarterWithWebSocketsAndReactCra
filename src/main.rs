@@ -16,7 +16,7 @@ use actix_web_httpauth::extractors::AuthenticationError;
 use actix_web_httpauth::middleware::HttpAuthentication;
 use actixweb4_starter::app::HTTP_SERVER_KEEP_ALIVE;
 use actixweb4_starter::responses::ApiKeyResponse;
-use actixweb4_starter::server::{health_check, redirect, not_found};
+use actixweb4_starter::server::{health_check, redirect, not_found, post_state_full, get_state, post_state, get_config, post_backup_log};
 use linemux::MuxedLines;
 use log::{debug, error, info};
 use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
@@ -57,232 +57,6 @@ use actixweb4_starter::{
 
 static SERVER_COUNTER: AtomicUsize = AtomicUsize::new(0);
 
-/// POST:/ws-echo
-#[post("/ws-echo")]
-async fn _ws_echo(msg: web::Json<PostWsEchoRequest>, websocket_srv: web::Data<Addr<WebServer>>) -> HttpResponse {
-  // The type of `j` is `serde_json::Value`
-  let json = json!({ "fingerprint": "0xF9BA143B95FF6D82", "message": msg.message });
-  // let wsm: WebSocketMessage = serde_json::from_value(json).unwrap();
-  let msg_type = &format!("{}", MessageToClientType::Echo)[..];
-  let message_to_client = MessageToClient::new(msg_type, json);
-  // let message_to_client = MessageToClient::new("echo", json);
-  // websocket_srv.do_send(message_to_client);
-  match websocket_srv.send(message_to_client).await {
-    Ok(ok) => debug!("{:?}", ok),
-    Err(e) => error!("{:?}", e),
-  };
-  HttpResponse::Ok().json(PostWsEchoResponse { message: msg.message.clone() })
-}
-
-/// GET:/ | GET:/name
-async fn _greet(req: HttpRequest) -> impl Responder {
-  let name = req.match_info().get("name").unwrap_or("World");
-  format!("Hello {}!", &name)
-}
-
-/// POST:/state : same as /filter but change filters and respond with full state
-#[post("/state-full")]
-async fn post_state_full(msg: web::Json<PostStateRequest>, data: web::Data<AppState>, app_data: web::Data<AppStateGlobal>) -> Result<web::Json<AppStateResponse>> {
-  // global get counter's MutexGuard
-  let mut counter = app_data.counter.lock().unwrap();
-  // access counter inside MutexGuard
-  *counter += 1;
-
-  if !msg.filter_file.eq("") {
-    let mut filter_file = app_data.filter_file.lock().unwrap();
-    let mut regex_file = app_data.regex_file.lock().unwrap();
-    // access filter inside MutexGuard
-    *filter_file = msg.filter_file.clone();
-    *regex_file = Regex::new(msg.filter_file.clone().as_str()).unwrap();
-  }
-
-  if !msg.filter_line.eq("") {
-    let mut filter_line = app_data.filter_line.lock().unwrap();
-    let mut regex_line = app_data.regex_line.lock().unwrap();
-    // access filter inside MutexGuard
-    *filter_line = msg.filter_line.clone();
-    *regex_line = Regex::new(msg.filter_line.clone().as_str()).unwrap();
-  }
-
-  // workers state
-  let request_count = data.request_count.get() + 1;
-  data.request_count.set(request_count);
-
-  debug!("{:?}", msg);
-  // HttpResponse::Ok().json(PostFilterResponse {
-  //   message: String::from(request_count.to_string()),
-  // })
-  Ok(web::Json(AppStateResponse {
-    server_id: data.server_id,
-    request_count,
-    counter: *counter,
-    filter_file: String::from(&msg.filter_file),
-    filter_line: String::from(&msg.filter_line),
-  }))
-}
-
-/// POST:/filter
-#[post("/state")]
-async fn post_state(msg: web::Json<PostStateRequest>, data: web::Data<AppState>, app_data: web::Data<AppStateGlobal>) -> impl Responder /*Result<web::Json<PostFilterResponse>>*/ {
-  // global get counter's MutexGuard
-  let mut counter = app_data.counter.lock().unwrap();
-  // access counter inside MutexGuard
-  *counter += 1;
-
-  if !msg.filter_file.eq("") {
-    let mut filter_file = app_data.filter_file.lock().unwrap();
-    let mut regex_file = app_data.regex_file.lock().unwrap();
-    // access filter inside MutexGuard
-    *filter_file = msg.filter_file.clone();
-    match Regex::new(msg.filter_file.clone().as_str()) {
-      Ok(r) => *regex_file = r,
-      Err(e) => return HttpResponse::InternalServerError().json(ErrorMessageResponse { message: format!("{}", e) }),
-    }
-  }
-
-  if !msg.filter_line.eq("") {
-    let mut filter_line = app_data.filter_line.lock().unwrap();
-    let mut regex_line = app_data.regex_line.lock().unwrap();
-    // access filter inside MutexGuard
-    *filter_line = msg.filter_line.clone();
-    match Regex::new(msg.filter_line.clone().as_str()) {
-      Ok(r) => *regex_line = r,
-      Err(e) => return HttpResponse::InternalServerError().json(ErrorMessageResponse { message: format!("{}", e) }),
-    }
-  }
-
-  // workers state
-  let request_count = data.request_count.get() + 1;
-  data.request_count.set(request_count);
-
-  // output changed filters: leave stdout clean for output filtered log lines only
-  // out_message(format!("filters changed file: {}, line: {}", &msg.filter_file, &msg.filter_line), 0);
-
-  HttpResponse::Ok().json(PostStateResponse {
-    filter_file: String::from(&msg.filter_file),
-    filter_line: String::from(&msg.filter_line),
-  })
-}
-
-/// GET:/state
-#[get("/state")]
-async fn get_state(app_data: web::Data<AppStateGlobal>) -> Result<web::Json<GetStateResponse>> {
-  // extract config_file from mutexGuard
-  let current_config_file_mutex_guard = app_data.config_file.lock().unwrap();
-  let mut config_file = "";
-  if let Some(c) = current_config_file_mutex_guard.as_ref() {
-    config_file = c;
-  }
-
-  Ok(web::Json(GetStateResponse {
-    filter_file: app_data.filter_file.lock().unwrap().to_string(),
-    filter_line: app_data.filter_line.lock().unwrap().to_string(),
-    config_file: config_file.to_string(),
-  }))
-}
-
-#[get("/config")]
-async fn get_config(app_data: web::Data<AppStateGlobal>) -> impl Responder {
-  let current_config_file_mutex_guard = app_data.config_file.lock().unwrap();
-  match get_config_state(current_config_file_mutex_guard) {
-    Ok(c) => HttpResponse::Ok().json(c),
-    Err(e) => HttpResponse::InternalServerError().json(ErrorMessageResponse { message: format!("{:?}", e) }),
-  }
-}
-
-#[post("/backup-log")]
-async fn post_backup_log(msg: web::Json<PostbackupLogRequest>, app_data: web::Data<AppStateGlobal>) -> impl Responder {
-  let current_config_file_mutex_guard = app_data.config_file.lock().unwrap();
-  // read config state
-  let config_state;
-  match get_config_state(current_config_file_mutex_guard) {
-    Ok(c) => config_state = c,
-    Err(e) => return HttpResponse::InternalServerError().json(ErrorMessageResponse { message: format!("{:?}", e) }),
-  };
-  // get config item from config state
-  let config_item;
-  match get_config_item(&config_state, msg.key.clone()) {
-    Some(c) => config_item = c,
-    None => {
-      return HttpResponse::InternalServerError().json(ErrorMessageResponse {
-        message: format!("can't get config item key '{}' from config state", msg.key.clone()),
-      })
-    }
-  };
-  let key = config_item.key.borrow().as_ref().unwrap().clone();
-  let filter_file = config_item.filter_file.borrow().as_ref().unwrap().clone();
-  let filter_file_re = Regex::new(filter_file.as_str()).unwrap();
-  let files;
-  match get_config_files_from_regex(&config_state, filter_file_re) {
-    Some(c) => files = c,
-    None => {
-      return HttpResponse::InternalServerError().json(ErrorMessageResponse {
-        message: format!("can't get config files from from config state with item key '{}'", msg.key.clone()),
-      })
-    }
-  };
-
-  // TODO: add to notes
-  // stop command closure
-  let stop_command = |config_item: &ConfigItem| {
-    if config_item.stop_command.borrow().as_ref().is_some() {
-      let command = config_item.stop_command.borrow().as_ref().unwrap().clone();
-      match execute_command_shortcut(&command) {
-        Ok(_) => {}
-        // TODO: send back HTTP RESPONSE
-        Err(err) => debug!("{:?}", err),
-      };
-    };
-  };
-  // start command closure
-  let start_command = |config_item: &ConfigItem| {
-    if config_item.start_command.borrow().as_ref().is_some() {
-      let command = config_item.start_command.borrow().as_ref().unwrap().clone();
-      match execute_command_shortcut(&command) {
-        Ok(_) => {}
-        // TODO: send back HTTP RESPONSE
-        Err(err) => debug!("{:?}", err),
-      };
-    };
-  };
-
-  // stop command
-  if key.eq("all") {
-    for config_item_vec in config_state.configuration.borrow().to_vec() {
-      stop_command(&config_item_vec);
-    }
-  } else {
-    stop_command(&config_item);
-  };
-
-  // let key = config_item.key.lock().unwrap();
-  let date = get_current_formatted_date(FORMAT_DATE_TIME_FILE_NAME);
-  let file_name = format!("logs_{}_{}.tgz", key, date);
-  let file_path = format!("{}/{}", DOWNLOAD_FILES_PATH, file_name);
-  let file_url = format!("{}/{}", DOWNLOAD_URI_PATH_ABSOLUTE, file_name);
-  let command = format!("tar -zcf {} --ignore-failed-read --absolute-names {}", file_path, files);
-  let command_args = &[String::from("-c"), String::from(command)];
-  // debug!("{:?}", command_args);
-  let command_outcome: ExecuteCommandOutcome = execute_command(command_args, false);
-
-  // start command
-  if key.eq("all") {
-    for config_item_vec in config_state.configuration.borrow().to_vec() {
-      start_command(&config_item_vec);
-    }
-  } else {
-    start_command(&config_item);
-  };
-
-  if command_outcome.error_code != 0 {
-    error!("error_code: {}, stderr: {}", command_outcome.error_code, command_outcome.stderr_string);
-    HttpResponse::InternalServerError().json(ErrorMessageResponse {
-      message: format!("{:?}", command_outcome.stderr_string),
-    })
-  } else {
-    HttpResponse::Ok().json(BackupLogResponse { file_name, file_path, file_url })
-  }
-}
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -372,10 +146,6 @@ async fn main() -> std::io::Result<()> {
   //   panic!("{}", "You must supply input file(s) in config file or passed by --input-files flag");
   // }
 
-  // let initial_filter_file_re = Regex::new(initial_filter_file.as_str()).unwrap();
-  // let initial_filter_line_re = Regex::new(initial_filter_line.as_str()).unwrap();
-  // let match_file_re = initial_filter_file_re.is_match(r"c3-microcloud-backend.log");
-  // let match_line_re = iniPathBuf to Stringtial_filter_line_re.is_match(r"Jan 10 18:09:24 c3 docker/c3-microcloud-backend[941]: [Nest] 11  - 01/10/2022, 6:09:24 PM     LOG [HttpModule] POST https://172.17.0.1:8410/api/action 11ms}");
   let data = web::Data::new(AppStateGlobal {
     counter: Mutex::new(0),
     filter_file: Arc::new(Mutex::new(String::from(initial_filter_file.clone()))),
@@ -415,7 +185,7 @@ async fn main() -> std::io::Result<()> {
         let match_line_re = ref_regex_line.lock().unwrap().is_match(&line.line().to_string());
         if line.line().to_string().to_lowercase().eq("") || match_line_re {
           // out_message(format!("source: {}, line: {}", line.source().display(), line.line()), 0);
-          // TOOD: don't enable this will polute and creat some extra flood on syslog
+          // TODO: don't enable this, it will pollute and create some extra flood on syslog
           // out_message(format!("{}", line.line()), 0);
           // send message to client
           let json = json!({ "message": line.line() });
@@ -467,7 +237,7 @@ async fn main() -> std::io::Result<()> {
       .wrap(cors)
       // enable logger
       .wrap(middleware::Logger::default())
-      // new actixweb MUST USE everything wrapped in Data::new() this is the solution for webosckets connection error
+      // new actixweb MUST USE everything wrapped in Data::new() this is the solution for websockets connection error
       .app_data(Data::new(AppState {
         server_id: SERVER_COUNTER.fetch_add(1, Ordering::SeqCst),
         request_count: Cell::new(0),

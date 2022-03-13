@@ -69,4 +69,7 @@ deb:
 pushDeb:
 	@./pushToRemoteRepo.sh $(VERSION)
 
+buildDockerImage:
+	@docker build . -t actixweb4-starter
+
 .PHONY: start_server

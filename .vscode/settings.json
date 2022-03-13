@@ -20,6 +20,7 @@
     "Postbackup",
     "rsyslog",
     "structopt",
-    "syncthing"
+    "syncthing",
+    "websockets"
   ]
 }
