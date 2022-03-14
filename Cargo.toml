@@ -58,7 +58,7 @@ mime = "0.3.16"
 [package.metadata.deb]
 maintainer-scripts = "debian/"
 maintainer = "Mario Monteiro <mario.monteiro@critical-links.com>"
-copyright = "2021, Critical-Links.com <mail@critical-links.com>"
+copyright = "2022, koakh.com <marioammonteiro@gmail.com>"
 systemd-units = { enable = true }
 depends = "$auto"
 section = "utility"

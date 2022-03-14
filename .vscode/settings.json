@@ -22,5 +22,15 @@
     "structopt",
     "syncthing",
     "websockets"
-  ]
+  ],
+  "workbench.colorCustomizations": {
+    "activityBar.activeBackground": "#dbe203",
+    "activityBar.activeBorder": "#02989d",
+    "activityBar.background": "#dbe203",
+    "activityBar.foreground": "#15202b",
+    "activityBar.inactiveForeground": "#15202b99",
+    "activityBarBadge.background": "#02989d",
+    "activityBarBadge.foreground": "#e7e7e7",
+    "sash.hoverBorder": "#dbe203"
+  }
 }
