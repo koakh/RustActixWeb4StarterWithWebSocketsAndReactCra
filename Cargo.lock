@@ -182,7 +182,7 @@ dependencies = [
  "actix-utils",
  "futures-core",
  "futures-util",
- "mio 0.8.1",
+ "mio",
  "num_cpus",
  "socket2",
  "tokio",
@@ -314,6 +314,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "actix-web-static-files"
+version = "4.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "830ce9c2daaefe6fc8a484774b9fc9e79ab5b4685064c85d50fd55e820b9a6c5"
+dependencies = [
+ "actix-web",
+ "derive_more",
+ "futures-util",
+ "static-files",
+]
+
+[[package]]
 name = "actix_derive"
 version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -335,6 +347,7 @@ dependencies = [
  "actix-web",
  "actix-web-actors",
  "actix-web-httpauth",
+ "actix-web-static-files",
  "chrono",
  "derive_more",
  "env_logger",
@@ -350,6 +363,7 @@ dependencies = [
  "serde",
  "serde_derive",
  "serde_json",
+ "static-files",
  "structopt",
  "tokio",
  "tokio-stream",
@@ -512,6 +526,16 @@ name = "cfg-if"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
+
+[[package]]
+name = "change-detection"
+version = "1.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "159fa412eae48a1d94d0b9ecdb85c97ce56eb2a347c62394d3fdbf221adabc1a"
+dependencies = [
+ "path-matchers",
+ "path-slash",
+]
 
 [[package]]
 name = "chrono"
@@ -785,6 +809,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "glob"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9b919933a397b79c37e33b77bb2aa3dc8eb6e165ad809e58ff75bc7db2e34574"
+
+[[package]]
 name = "h2"
 version = "0.3.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -961,9 +991,9 @@ checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
 name = "libc"
-version = "0.2.119"
+version = "0.2.120"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1bf2e165bb3457c8e098ea76f3e3bc9db55f87aa90d52d0e6be741470916aaa4"
+checksum = "ad5c14e80759d0939d013e6ca49930e59fc53dd8e5009132f76240c179380c09"
 
 [[package]]
 name = "linemux"
@@ -1093,19 +1123,6 @@ dependencies = [
 
 [[package]]
 name = "mio"
-version = "0.7.14"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8067b404fe97c70829f082dec8bcf4f71225d7eaea1d8645349cb76fa06205cc"
-dependencies = [
- "libc",
- "log",
- "miow",
- "ntapi",
- "winapi",
-]
-
-[[package]]
-name = "mio"
 version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7ba42135c6a5917b9db9cd7b293e5409e1c6b041e6f9825e92e55a894c63b6f8"
@@ -1129,9 +1146,9 @@ dependencies = [
 
 [[package]]
 name = "notify"
-version = "5.0.0-pre.13"
+version = "5.0.0-pre.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "245d358380e2352c2d020e8ee62baac09b3420f1f6c012a31326cfced4ad487d"
+checksum = "d13c22db70a63592e098fb51735bab36646821e6389a0ba171f3549facdf0b74"
 dependencies = [
  "bitflags",
  "crossbeam-channel",
@@ -1140,7 +1157,7 @@ dependencies = [
  "inotify",
  "kqueue",
  "libc",
- "mio 0.7.14",
+ "mio",
  "walkdir",
  "winapi",
 ]
@@ -1287,6 +1304,21 @@ name = "paste"
 version = "1.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0744126afe1a6dd7f394cb50a716dbe086cb06e255e53d8d0185d82828358fb5"
+
+[[package]]
+name = "path-matchers"
+version = "1.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "36cd9b72a47679ec193a5f0229d9ab686b7bd45e1fbc59ccf953c9f3d83f7b2b"
+dependencies = [
+ "glob",
+]
+
+[[package]]
+name = "path-slash"
+version = "0.1.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3cacbb3c4ff353b534a67fb8d7524d00229da4cb1dc8c79f4db96e375ab5b619"
 
 [[package]]
 name = "percent-encoding"
@@ -1582,6 +1614,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "static-files"
+version = "0.2.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "64712ea1e3e140010e1d9605872ba205afa2ab5bd38191cc6ebd248ae1f6a06b"
+dependencies = [
+ "change-detection",
+ "mime_guess",
+ "path-slash",
+]
+
+[[package]]
 name = "strsim"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1613,9 +1656,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "1.0.86"
+version = "1.0.87"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8a65b3f4ffa0092e9887669db0eae07941f023991ab58ea44da8fe8e2d511c6b"
+checksum = "1e59d925cf59d8151f25a3bedf97c9c157597c9df7324d32d68991cc399ed08b"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1724,7 +1767,7 @@ dependencies = [
  "bytes",
  "libc",
  "memchr",
- "mio 0.8.1",
+ "mio",
  "num_cpus",
  "once_cell",
  "parking_lot 0.12.0",

@@ -21,7 +21,7 @@ use crate::{
 
 /// GET:/ping
 #[get("/ping")]
-async fn health_check(_: HttpRequest) -> Result<web::Json<MessageResponse>> {
+pub async fn health_check(_: HttpRequest) -> Result<web::Json<MessageResponse>> {
   Ok(web::Json(MessageResponse { message: "pong".to_string() }))
 }
 

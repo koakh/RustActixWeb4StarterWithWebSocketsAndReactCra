@@ -9,3 +9,11 @@ Project:
     ☐ must use random key endpoint in ccp to prevent c++ hack/disassbler
     ☐ add react cra with tailwind css
     ☐ add postgres SeaOrm or dead pool to work with citizen card
+    ☐ @critical reuse config and parameters with meanful stuff for starter ex `initial filters file: '^.*c3-.*\.log$', line: '(?i)(.*)'`
+
+    ☐ add from c3-updater
+      ☐ middleware::Logger
+      ☐ cra and react app
+      ☐ exec command
+      ☐ request some api add _test_actix_client _test_actix_client_service_health
+      ☐ endpoint get app-state / post app-state

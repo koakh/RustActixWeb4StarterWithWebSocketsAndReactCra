@@ -10,6 +10,8 @@ pub const LOG_FILE_PATH: &'static str = "./actixweb4-starter.log";
 // DEBUG
 pub const LOG_DEFAULT_LEVEL: &'static str = "ERROR";
 pub const LOGFILE_DEFAULT_LEVEL: &'static str = "ERROR";
+pub const LOG_ACTIXWEB_MIDDLEWARE_FORMAT: &'static str = r#""%r" %s %b "%{User-Agent}i" %D"#;
+
 // pub const DEFAULT_RUST_LOG: &'static str = "error,actix_server=error,actix_web=error";
 // misc
 pub const LOG_HEADER_LINE_CHAR: &'static char = &'-';
@@ -25,9 +27,11 @@ pub const DEFAULT_CERT_FILE_NAME_KEY: &'static str = "key.pem";
 // cert.pem
 pub const DEFAULT_CERT_FILE_NAME_CERT: &'static str = "cert.pem";
 // files - /static/
-pub const DOWNLOAD_FILES_PATH: &'static str = "./static/downloads";
+// TODO: env var on DOWNLOAD_FILES_PATH
+pub const DOWNLOAD_FILES_PATH: &'static str = "./static";
 pub const DOWNLOAD_URI_PATH: &'static str = "/downloads";
-pub const DOWNLOAD_URI_PATH_ABSOLUTE: &'static str = "https://c3edu.online:8543/downloads";
+pub const DOWNLOAD_URI_PATH_ABSOLUTE: &'static str = "https://localhost:8543/downloads";
+pub const PUBLIC_URI_PATH: &'static str = "/";
 // date
 pub const FORMAT_DATE_TIME: &'static str = "%Y-%m-%d %H:%M:%S";
 pub const FORMAT_DATE_TIME_FILE_NAME: &'static str = "%Y-%m-%d_%H-%M-%S";

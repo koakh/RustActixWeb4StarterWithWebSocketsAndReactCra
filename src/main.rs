@@ -35,11 +35,12 @@ use std::{
 };
 use structopt::StructOpt;
 // // use local modules from mod.rs
+use actix_web_static_files::ResourceFiles;
 use actixweb4_starter::{
   app::{
     config::ConfigItem, init_log4rs, AppState, AppStateGlobal, Cli, ConfigState, APP_NAME, CONFIG_FILE_PATH, DEFAULT_CERT_FILE_NAME_CERT, DEFAULT_CERT_FILE_NAME_KEY, DEFAULT_CONFIG_PATH_SSL,
     DEFAULT_FILTER_FILE, DEFAULT_FILTER_LINE, DEFAULT_HTTP_SERVER_URI, DOWNLOAD_FILES_PATH, DOWNLOAD_URI_PATH, DOWNLOAD_URI_PATH_ABSOLUTE, FORMAT_DATE_TIME_FILE_NAME, HTTP_SERVER_API_KEY,
-    HTTP_SERVER_KEEP_ALIVE, RANDOM_STRING_GENERATOR_CHARSET, RANDOM_STRING_GENERATOR_SIZE,
+    HTTP_SERVER_KEEP_ALIVE, LOG_ACTIXWEB_MIDDLEWARE_FORMAT, PUBLIC_URI_PATH, RANDOM_STRING_GENERATOR_CHARSET, RANDOM_STRING_GENERATOR_SIZE,
   },
   enums::MessageToClientType,
   requests::{PostStateRequest, PostWsEchoRequest, PostbackupLogRequest},
@@ -51,6 +52,9 @@ use actixweb4_starter::{
   },
   websocket::{ws_index, MessageToClient, Server as WebServer},
 };
+
+// for static files
+include!(concat!(env!("OUT_DIR"), "/generated.rs"));
 
 static SERVER_COUNTER: AtomicUsize = AtomicUsize::new(0);
 
@@ -228,11 +232,14 @@ async fn main() -> std::io::Result<()> {
   HttpServer::new(move || {
     // cors
     let cors = Cors::default().allow_any_origin().allow_any_header().allow_any_method().supports_credentials();
+    // init actix_web_static_files generated
+    let generated = generate();
 
     App::new()
       .wrap(cors)
       // enable logger
-      .wrap(middleware::Logger::default())
+      // .wrap(middleware::Logger::default())
+      .wrap(middleware::Logger::new(LOG_ACTIXWEB_MIDDLEWARE_FORMAT))
       // new actixweb MUST USE everything wrapped in Data::new() this is the solution for websockets connection error
       .app_data(Data::new(AppState {
         server_id: SERVER_COUNTER.fetch_add(1, Ordering::SeqCst),
@@ -249,12 +256,15 @@ async fn main() -> std::io::Result<()> {
       .service(redirect)
       // disabled
       // .service(api_key)
+      // TODO: can't show listing yet
       // we allow the visitor to see an index of the images at `/downloads`.
-      .service(Files::new(format!("/{}", DOWNLOAD_FILES_PATH).as_str(), format!("static/{}", DOWNLOAD_FILES_PATH).as_str()).show_files_listing())
+      .service(Files::new(format!("{}", DOWNLOAD_FILES_PATH).as_str(), format!("{}{}", DOWNLOAD_FILES_PATH, DOWNLOAD_URI_PATH).as_str()).show_files_listing())
+      // TODO: download path is a ENV VAR
       // without see an index of the images at `/downloads`.
-      .service(Files::new(format!("{}", DOWNLOAD_URI_PATH).as_str(), format!("{}", DOWNLOAD_FILES_PATH).as_str()))
+      .service(Files::new(format!("{}", DOWNLOAD_URI_PATH).as_str(), format!("{}{}", DOWNLOAD_FILES_PATH, DOWNLOAD_URI_PATH).as_str()))
       // scoped
       .service(
+        // TODO: use /api on constants and ENV VAR ex /api/v1
         web::scope("/api")
           // authentication middleware, warn: Bearer must be uppercased Bearer to work with actix-web-httpauth, bearer fails
           .wrap(HttpAuthentication::bearer(validator))
@@ -269,7 +279,10 @@ async fn main() -> std::io::Result<()> {
         // static, leave / route to the end, else it overrides all others
         // .route("/", web::get().to(greet)),
       )
-      .default_service(web::route().to(not_found))
+    // static, leave / route to the end, else it overrides all others
+    .service(ResourceFiles::new("/", generated).resolve_not_found_to_root())
+    // after all is default_service if above / is not used only
+    // .default_service(web::route().to(not_found))
   })
   // .workers(2)
   .keep_alive(Duration::from_secs(HTTP_SERVER_KEEP_ALIVE))
