@@ -54,3 +54,4 @@ target/
 samples/actixweb/websocket/target/
 samples/lazy-log/node_modules/
 app/node_modules/
+.vscode/chrome/

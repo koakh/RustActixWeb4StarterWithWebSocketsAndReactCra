@@ -10,6 +10,11 @@ LOGFILE_DEFAULT_LEVEL=DEBUG
 CONFIG_PATH_SSL := ./config/ssl
 CERT_FILE_NAME_KEY := key.pem
 CERT_FILE_NAME_CERT := cert.pem
+REACT_HOST := localhost
+REACT_BROWSER=none
+REACT_APP_HOST_WS := $(REACT_HOST)
+REACT_APP_PORT_WS := 8544
+REACT_APP_PORT := 8545
 
 build:
 	cargo build
@@ -55,12 +60,15 @@ startConfigServerSudo:
 			"/etc/actixweb4-starter/config.json"
 
 startClient:
-	@cd samples/actixweb/websocket && \
-		binserve
-
-startReactClient:
-	@cd samples/lazy-log && \
-		HOST=192.168.1.120 npm run start
+	@BROWSER=$(REACT_BROWSER) \
+	HOST=$(REACT_HOST) \
+	HTTPS=true \
+	PORT=$(REACT_APP_PORT) \
+	REACT_APP_HOST_WS=$(REACT_APP_HOST_WS) \
+	REACT_APP_PORT_WS=$(REACT_APP_PORT_WS) \
+	PUBLIC_URL="." \
+	NODE_TLS_REJECT_UNAUTHORIZED="0" \
+	npm start --prefix app
 
 # always remove last build to prevent stalled files
 deb:

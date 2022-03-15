@@ -8,8 +8,10 @@ Project:
     ☐ added upload to client.http from c3-backend
     ☐ must use random key endpoint in ccp to prevent c++ hack/disassbler
     ☐ add react cra with tailwind css
+    ☐ @critical ws sample in react
     ☐ add postgres SeaOrm or dead pool to work with citizen card
     ☐ @critical reuse config and parameters with meanful stuff for starter ex `initial filters file: '^.*c3-.*\.log$', line: '(?i)(.*)'`
+    ☐ @critical remove config and other c3 and links related stuff, like tailor config
 
     ☐ add from c3-updater
       ☐ middleware::Logger

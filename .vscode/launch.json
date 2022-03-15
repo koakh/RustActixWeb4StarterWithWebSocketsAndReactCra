@@ -71,6 +71,30 @@
       },
       "args": [],
       "cwd": "${workspaceFolder}"
-    }
+    },
+    // start client with `npm run start` or `make startClient` and launch debugger with F5
+    // the main trick is using localhost and let debugger open url https://localhost:8462
+    // to connect to production 8410 and websockets use url https://c3edu.online:8460
+    {
+      "name": "Debug React Frontend",
+      "type": "pwa-chrome",
+      "request": "launch",
+      // trick is using localhost here
+      "url": "https://localhost:8545",
+      "webRoot": "${workspaceRoot}/app",
+      "userDataDir": "${workspaceRoot}/.vscode/chrome",
+      "sourceMapPathOverrides": {
+        "webpack:///src/*": "${webRoot}/app/src/*"
+      },
+      "cwd": "${webRoot}/app/src/",
+      "linux": {
+        // require bellow fix in settings.json to work with manjaro chromium debugger
+        // "debug.javascript.usePreview": false
+        "runtimeExecutable": "/usr/bin/chromium"
+      },
+      "env": {
+        "NODE_TLS_REJECT_UNAUTHORIZED": 0
+      }
+    }    
   ]
 }
