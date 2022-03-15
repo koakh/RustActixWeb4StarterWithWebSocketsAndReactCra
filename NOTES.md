@@ -1,5 +1,9 @@
 # NOTES
 
+## TLDR MD Notes
+
+- `'Rust - ActixWeb v4.0 - Add React Project'`
+
 ## TLDR Debug
 
 just stop service and launch `Debug executable 'actixweb4-starter'`
@@ -148,7 +152,7 @@ assert!(re.is_match("2014-01-01"));
 
 `^.*c3-microcloud-.*\.log$`
 
-```
+```shell
 /var/log/docker/c3-microcloud-backend.log
 /var/log/docker/c3-microcloud-frontend.log
 /var/log/docker/c3-system-service-mongo.log
@@ -188,13 +192,13 @@ actix-web-actors = "4.0.0-beta.10"
 
 ## WebSocket : Client Connection Error
 
-```
+```shell
 (index):20 WebSocket connection to 'ws://c3edu.online:8080/ws/' failed: Error during WebSocket handshake: Unexpected response code: 500
 ```
 
 enable actix debug level `std::env::set_var("RUST_LOG", "actix_server=debug,actix_web=debug");`
 
-```
+```shell
 [2022-01-12T12:11:02Z DEBUG actix_web::data] Failed to extract `Data<actix::address::Addr<tail::websocket::server::Server>>` for `/ws/` handler. For the Data extractor to work correctly, wrap the data with `Data::new()` and pass it to `App::app_data()`. Ensure that types align in both the set and retrieve calls.
 ```
 
