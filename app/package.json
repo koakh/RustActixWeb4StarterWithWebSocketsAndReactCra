@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "react-scripts start",
+    "start": "HOST=localhost react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "tw:watch": "npx tailwindcss -i ./src/input.css -o ./src/index.css --watch"
   },
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.2",
@@ -24,7 +25,8 @@
     "websocket": "^1.0.34"
   },
   "devDependencies": {
-    "@types/websocket": "^1.0.5"
+    "@types/websocket": "^1.0.5",
+    "tailwindcss": "^3.0.23"
   },
   "eslintConfig": {
     "extends": [

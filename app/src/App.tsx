@@ -1,5 +1,3 @@
-import logo from './logo.svg';
-import './App.css';
 import { useEffect } from 'react';
 import { wsConnect } from './utils/ws';
 
@@ -12,21 +10,10 @@ export const App = () => {
   }, []);
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="m-4 p-4 rounded-lg bg-slate-200 border-2 border-slate-300">
+      <h1 className="text-2xl text-gray-700 font-bold uppercase">
+        Actixweb4-Starter + CRA 5.0 + TailwindCss 3 + Typescript Starter
+      </h1>
     </div>
   );
 };

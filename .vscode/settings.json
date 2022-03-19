@@ -22,6 +22,7 @@
     "rsyslog",
     "structopt",
     "syncthing",
+    "tailwindcss",
     "websockets"
   ]
 }
