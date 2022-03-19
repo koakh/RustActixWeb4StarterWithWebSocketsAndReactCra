@@ -72,9 +72,8 @@
       "args": [],
       "cwd": "${workspaceFolder}"
     },
-    // start client with `npm run start` or `make startClient` and launch debugger with F5
-    // the main trick is using localhost and let debugger open url https://localhost:8462
-    // to connect to production 8410 and websockets use url https://c3edu.online:8460
+    // start client with `make startReactClient` and launch debugger with F5
+    // the main trick is using localhost and let debugger open url https://localhost:8545
     {
       "name": "Debug React Frontend",
       "type": "pwa-chrome",

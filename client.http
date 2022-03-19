@@ -13,12 +13,28 @@
 GET {{baseUri}}/ping HTTP/1.1
 Content-Type: {{contentType}}
 
-### secretApiKey
-// @name secretApiKey
-// currently handler is disabled
+### wsEcho
+// @name wsEcho
 
-GET {{baseUri}}/secret-api-key HTTP/1.1
+POST {{uri}}/ws-echo HTTP/1.1
 Content-Type: {{contentType}}
+Authorization: Bearer {{apiKey}}
+
+{
+  "message": "hi there"
+}
+
+
+### testAwc
+// @name testAwc
+
+POST {{uri}}/test-awc HTTP/1.1
+Content-Type: {{contentType}}
+Authorization: Bearer {{apiKey}}
+
+{
+  "uri": "https://www.koakh.com"
+}
 
 ### uploadFile
 // @name uploadFile
@@ -113,13 +129,9 @@ GET {{uri}}/John HTTP/1.1
 Content-Type: {{contentType}}
 Authorization: Bearer {{apiKey}}
 
-### wsEcho
-// @name wsEcho
+### secretApiKey
+// @name secretApiKey
+// currently handler is disabled
 
-POST {{uri}}/ws-echo HTTP/1.1
+GET {{baseUri}}/secret-api-key HTTP/1.1
 Content-Type: {{contentType}}
-Authorization: Bearer {{apiKey}}
-
-{
-  "message": "hi there"
-}

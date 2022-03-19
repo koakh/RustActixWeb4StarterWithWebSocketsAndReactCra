@@ -2,7 +2,6 @@
 // trick for .start() is start using actix::prelude::* and find the required import, ex Actor
 // find what is the required trait to not include all of them
 use actix::prelude::{Actor, Addr};
-// use actix::prelude::*;
 use actix_cors::Cors;
 use actix_files::Files;
 use actix_web::dev::{AppService, HttpServiceFactory, ResourceDef, ServiceRequest};
@@ -43,9 +42,9 @@ use actixweb4_starter::{
     HTTP_SERVER_KEEP_ALIVE, LOG_ACTIXWEB_MIDDLEWARE_FORMAT, PUBLIC_URI_PATH, RANDOM_STRING_GENERATOR_CHARSET, RANDOM_STRING_GENERATOR_SIZE,
   },
   enums::MessageToClientType,
-  requests::{PostStateRequest, PostWsEchoRequest, PostbackupLogRequest},
+  requests::{PostStateRequest, PostWsEchoRequest},
   responses::{ApiKeyResponse, AppStateResponse, BackupLogResponse, ErrorMessageResponse, GetStateResponse, MessageResponse, PostStateResponse, PostWsEchoResponse},
-  server::{get_config, get_state, health_check, not_found, post_backup_log, post_state, post_state_full, redirect, upload},
+  server::{get_config, get_state, health_check, not_found, post_state, post_state_full, redirect, test_awc, upload, ws_echo},
   util::{
     execute_command, execute_command_shortcut, generate_random_string, get_config_files_from_regex, get_config_item, get_config_state, get_current_formatted_date, out_message, pathbuf_to_str,
     read_config, read_generic_type, ExecuteCommandOutcome,
@@ -272,9 +271,9 @@ async fn main() -> std::io::Result<()> {
           .service(get_state)
           .service(post_state)
           .service(get_config)
-          .service(post_backup_log)
-          .service(upload),
-        // .service(ws_echo)
+          .service(upload)
+          .service(test_awc)
+          .service(ws_echo)
         // .route("/{name}", web::get().to(greet))
         // static, leave / route to the end, else it overrides all others
         // .route("/", web::get().to(greet)),

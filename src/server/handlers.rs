@@ -3,21 +3,26 @@ use actix_multipart::Multipart;
 use actix_web::{
   get,
   http::{header, StatusCode},
-  post, web, Error as ActixError, HttpRequest, HttpResponse, Result,Responder
+  post, web, Error as ActixError, HttpRequest, HttpResponse, Responder, Result,
 };
-use serde_json::json;
+use awc::Client;
 use log::{debug, error};
 use regex::Regex;
+use serde_json::json;
 
 use crate::{
-  app::{ENDPOINT_REDIRECT_TO, RANDOM_STRING_GENERATOR_CHARSET, RANDOM_STRING_GENERATOR_SIZE, AppStateGlobal, AppState, config::ConfigItem, FORMAT_DATE_TIME_FILE_NAME, DOWNLOAD_FILES_PATH, DOWNLOAD_URI_PATH_ABSOLUTE},
+  app::{AppState, AppStateGlobal, ENDPOINT_REDIRECT_TO, RANDOM_STRING_GENERATOR_CHARSET, RANDOM_STRING_GENERATOR_SIZE},
   enums::MessageToClientType,
-  responses::{ApiKeyResponse, MessageResponse, AppStateResponse, PostStateResponse, ErrorMessageResponse, GetStateResponse, BackupLogResponse, PostWsEchoResponse},
-  requests::{PostStateRequest, PostWsEchoRequest, PostbackupLogRequest},
+  requests::{PostAwcUriRequest, PostStateRequest, PostWsEchoRequest},
+  responses::{ApiKeyResponse, AppStateResponse, ErrorMessageResponse, GetStateResponse, MessageResponse, PostStateResponse, PostWsEchoResponse},
   server::save_file,
-  util::{generate_random_string, get_config_state, get_config_item, get_config_files_from_regex, execute_command_shortcut, get_current_formatted_date, execute_command, ExecuteCommandOutcome},
+  util::{generate_random_string, get_config_state},
   websocket::{MessageToClient, Server as WebServer},
 };
+
+pub async fn not_found() -> Result<HttpResponse, ActixError> {
+  Ok(HttpResponse::build(StatusCode::NOT_FOUND).json(MessageResponse { message: String::from("not found") }))
+}
 
 /// GET:/ping
 #[get("/ping")]
@@ -33,6 +38,7 @@ async fn _api_key(_: HttpRequest) -> Result<web::Json<ApiKeyResponse>> {
   }))
 }
 
+/// GET:/redirect
 #[get("/redirect")]
 pub async fn redirect() -> HttpResponse {
   HttpResponse::Found()
@@ -42,25 +48,9 @@ pub async fn redirect() -> HttpResponse {
     .finish()
 }
 
-pub async fn not_found() -> Result<HttpResponse, ActixError> {
-  Ok(HttpResponse::build(StatusCode::NOT_FOUND).json(MessageResponse { message: String::from("not found") }))
-}
-
-#[post("/upload")]
-pub async fn upload(payload: Multipart) -> Result<HttpResponse, ActixError> {
-  let upload_status = save_file(payload).await;
-
-  match upload_status {
-    Ok(_) => Ok(HttpResponse::build(StatusCode::OK).json(MessageResponse {
-      message: "successful upload".to_string(),
-    })),
-    Err(e) => Ok(HttpResponse::build(StatusCode::NOT_FOUND).json(MessageResponse { message: format!("failed upload: {}", e) })),
-  }
-}
-
 /// POST:/ws-echo
 #[post("/ws-echo")]
-pub async fn _ws_echo(msg: web::Json<PostWsEchoRequest>, websocket_srv: web::Data<Addr<WebServer>>) -> HttpResponse {
+pub async fn ws_echo(msg: web::Json<PostWsEchoRequest>, websocket_srv: web::Data<Addr<WebServer>>) -> HttpResponse {
   // The type of `j` is `serde_json::Value`
   let json = json!({ "fingerprint": "0xF9BA143B95FF6D82", "message": msg.message });
   // let wsm: WebSocketMessage = serde_json::from_value(json).unwrap();
@@ -182,6 +172,7 @@ pub async fn get_state(app_data: web::Data<AppStateGlobal>) -> Result<web::Json<
   }))
 }
 
+// GET:config
 #[get("/config")]
 pub async fn get_config(app_data: web::Data<AppStateGlobal>) -> impl Responder {
   let current_config_file_mutex_guard = app_data.config_file.lock().unwrap();
@@ -191,96 +182,38 @@ pub async fn get_config(app_data: web::Data<AppStateGlobal>) -> impl Responder {
   }
 }
 
-#[post("/backup-log")]
-pub async fn post_backup_log(msg: web::Json<PostbackupLogRequest>, app_data: web::Data<AppStateGlobal>) -> impl Responder {
-  let current_config_file_mutex_guard = app_data.config_file.lock().unwrap();
-  // read config state
-  let config_state;
-  match get_config_state(current_config_file_mutex_guard) {
-    Ok(c) => config_state = c,
-    Err(e) => return HttpResponse::InternalServerError().json(ErrorMessageResponse { message: format!("{:?}", e) }),
-  };
-  // get config item from config state
-  let config_item;
-  match get_config_item(&config_state, msg.key.clone()) {
-    Some(c) => config_item = c,
-    None => {
-      return HttpResponse::InternalServerError().json(ErrorMessageResponse {
-        message: format!("can't get config item key '{}' from config state", msg.key.clone()),
-      })
-    }
-  };
-  let key = config_item.key.borrow().as_ref().unwrap().clone();
-  let filter_file = config_item.filter_file.borrow().as_ref().unwrap().clone();
-  let filter_file_re = Regex::new(filter_file.as_str()).unwrap();
-  let files;
-  match get_config_files_from_regex(&config_state, filter_file_re) {
-    Some(c) => files = c,
-    None => {
-      return HttpResponse::InternalServerError().json(ErrorMessageResponse {
-        message: format!("can't get config files from from config state with item key '{}'", msg.key.clone()),
-      })
-    }
-  };
+/// POST:/upload
+#[post("/upload")]
+pub async fn upload(payload: Multipart) -> Result<HttpResponse, ActixError> {
+  let upload_status = save_file(payload).await;
 
-  // TODO: add to notes
-  // stop command closure
-  let stop_command = |config_item: &ConfigItem| {
-    if config_item.stop_command.borrow().as_ref().is_some() {
-      let command = config_item.stop_command.borrow().as_ref().unwrap().clone();
-      match execute_command_shortcut(&command) {
-        Ok(_) => {}
-        // TODO: send back HTTP RESPONSE
-        Err(err) => debug!("{:?}", err),
-      };
-    };
-  };
-  // start command closure
-  let start_command = |config_item: &ConfigItem| {
-    if config_item.start_command.borrow().as_ref().is_some() {
-      let command = config_item.start_command.borrow().as_ref().unwrap().clone();
-      match execute_command_shortcut(&command) {
-        Ok(_) => {}
-        // TODO: send back HTTP RESPONSE
-        Err(err) => debug!("{:?}", err),
-      };
-    };
-  };
+  match upload_status {
+    Ok(_) => Ok(HttpResponse::build(StatusCode::OK).json(MessageResponse {
+      message: "successful upload".to_string(),
+    })),
+    Err(e) => Ok(HttpResponse::build(StatusCode::NOT_FOUND).json(MessageResponse {
+      message: format!("failed upload: {}", e),
+    })),
+  }
+}
 
-  // stop command
-  if key.eq("all") {
-    for config_item_vec in config_state.configuration.borrow().to_vec() {
-      stop_command(&config_item_vec);
-    }
-  } else {
-    stop_command(&config_item);
-  };
-
-  // let key = config_item.key.lock().unwrap();
-  let date = get_current_formatted_date(FORMAT_DATE_TIME_FILE_NAME);
-  let file_name = format!("logs_{}_{}.tgz", key, date);
-  let file_path = format!("{}/{}", DOWNLOAD_FILES_PATH, file_name);
-  let file_url = format!("{}/{}", DOWNLOAD_URI_PATH_ABSOLUTE, file_name);
-  let command = format!("tar -zcf {} --ignore-failed-read --absolute-names {}", file_path, files);
-  let command_args = &[String::from("-c"), String::from(command)];
-  // debug!("{:?}", command_args);
-  let command_outcome: ExecuteCommandOutcome = execute_command(command_args, false);
-
-  // start command
-  if key.eq("all") {
-    for config_item_vec in config_state.configuration.borrow().to_vec() {
-      start_command(&config_item_vec);
-    }
-  } else {
-    start_command(&config_item);
-  };
-
-  if command_outcome.error_code != 0 {
-    error!("error_code: {}, stderr: {}", command_outcome.error_code, command_outcome.stderr_string);
-    HttpResponse::InternalServerError().json(ErrorMessageResponse {
-      message: format!("{:?}", command_outcome.stderr_string),
-    })
-  } else {
-    HttpResponse::Ok().json(BackupLogResponse { file_name, file_path, file_url })
+/// POST:/test-awc
+#[post("/test-awc")]
+pub async fn test_awc(msg: web::Json<PostAwcUriRequest>) -> Result<HttpResponse, ActixError> {
+  let client = Client::default();
+  let res = client
+    // create request builder
+    .get(msg.uri.as_str())
+    .insert_header(("User-Agent", "Actix-web"))
+    // send http request
+    .send()
+    .await;
+  match res {
+    Ok(_) => Ok(HttpResponse::build(StatusCode::OK).json(MessageResponse {
+      message: "request successful".to_string(),
+    })),
+    Err(e) => Ok(HttpResponse::build(StatusCode::NOT_FOUND).json(MessageResponse {
+      message: format!("request failed to: {}", e),
+    })),
   }
 }

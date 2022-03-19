@@ -20,14 +20,10 @@ pub const LOG_HEADER_LINE_LEN: &'static u8 = &120;
 pub const DEFAULT_FILTER_FILE: &'static str = r"^.*c3-.*\.log$";
 pub const DEFAULT_FILTER_LINE: &'static str = r"(?i)(.*)";
 // certificates
-// ./config/ssl
 pub const DEFAULT_CONFIG_PATH_SSL: &'static str = "./config/ssl";
-// key.pem
 pub const DEFAULT_CERT_FILE_NAME_KEY: &'static str = "key.pem";
-// cert.pem
 pub const DEFAULT_CERT_FILE_NAME_CERT: &'static str = "cert.pem";
 // files - /static/
-// TODO: env var on DOWNLOAD_FILES_PATH
 pub const DOWNLOAD_FILES_PATH: &'static str = "./static";
 pub const DOWNLOAD_URI_PATH: &'static str = "/downloads";
 pub const DOWNLOAD_URI_PATH_ABSOLUTE: &'static str = "https://localhost:8543/downloads";

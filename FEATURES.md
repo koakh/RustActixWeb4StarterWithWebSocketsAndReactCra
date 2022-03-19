@@ -1,22 +1,28 @@
 # FEATURES
 
-## Implemented
+## Implemented Backend
 
-- [X] make debian and systemd service
-- [X] Https/TLS
-- [X] Protected BearerAuth ApiKey
-- [X] Upload Multipart Files
-- [X] Cors
-- [-] Download/Static Files with Show files listing
-- [X] Create React App Static Files
-  - [-] Simple page with Working WS ex when we request ping show ws event timestamp, uuid and response on console
-- [X] not found route
-- [X] redirect to
-- [X] keep alive time
-- [X] 
+- [x] https/tls rest server
+- [x] http/tls websocket server
+- [x] make debian and systemd service
+- [x] protected endpoint with bearer auth apikey
+- [x] upload multipart files
+- [x] cors
+- [-] download/static files with show files listing
+- [x] not found route
+- [x] redirect to
+- [x] keep alive time
+- [ ] extenal api request
+
+## Implemented Frontend
+
+- [x] create react app static files
+  - [-] simple page with working /ws-echo endpoint
+  - [x] websocket client with reconnect
+  - [-] tailwind
 
 ## Todo
 
-- [-] Postgres with Deadpool
+- [-] postgres with deadpool
 - [-] docker image and docker-compose
 - [-] final readme with features

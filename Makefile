@@ -1,19 +1,20 @@
 SHELL := /bin/bash
-# default only here for wuick changes
+# backend
+# default only here for quick changes
 HTTP_SERVER_URI := 0.0.0.0:8543
-REACT_APP_PORT_WS := 8080
+HTTP_SERVER_API_KEY := uOtXEZXYslKyB0n3g3xRmCaaNsAwB5KmgFcy1X7bbcbtS9dhOpKuhZ04Mfr2OKGL
 # RUST_LOG := trace,actix_server=trace,actix_web=trace
-# RUST_LOG := debug,actix_server=debug,actix_web=debug
 LOG_DEFAULT_LEVEL=DEBUG
 LOGFILE_DEFAULT_LEVEL=DEBUG
 # used to override defaults
 CONFIG_PATH_SSL := ./config/ssl
 CERT_FILE_NAME_KEY := key.pem
 CERT_FILE_NAME_CERT := cert.pem
+# frontend
 REACT_HOST := localhost
 REACT_BROWSER=none
 REACT_APP_HOST_WS := $(REACT_HOST)
-REACT_APP_PORT_WS := 8544
+REACT_APP_PORT_WS := 8543
 REACT_APP_PORT := 8545
 
 build:
@@ -59,7 +60,8 @@ startConfigServerSudo:
 			"-c" \
 			"/etc/actixweb4-starter/config.json"
 
-startClient:
+# used to debug frontend with hotReload
+startReactClient:
 	@BROWSER=$(REACT_BROWSER) \
 	HOST=$(REACT_HOST) \
 	HTTPS=true \
@@ -68,6 +70,7 @@ startClient:
 	REACT_APP_PORT_WS=$(REACT_APP_PORT_WS) \
 	PUBLIC_URL="." \
 	NODE_TLS_REJECT_UNAUTHORIZED="0" \
+	REACT_APP_SHOW_DEBUG_IN_CONSOLE_LOG=true \
 	npm start --prefix app
 
 # always remove last build to prevent stalled files

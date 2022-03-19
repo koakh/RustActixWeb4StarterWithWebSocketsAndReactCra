@@ -1,21 +1,22 @@
 Project:
-  service:
-    ☐ @critical create server dir/mod with server stuff and handlers, try to clean up main file
+  Httpservice:
+    @critical create server dir/mod with server stuff and handlers, try to clean up main file
     ☐ better logger?
     ✔ add random key endpoint @done(22-03-12 19:11)
     ✔ add multipart upload from rpi http server @done(22-03-12 23:05)
     ✔ add all new stuff from deadpool like time, redirect, 404 endpoint @done(22-03-12 23:41)
-    ☐ added upload to client.http from c3-backend
-    ☐ must use random key endpoint in ccp to prevent c++ hack/disassbler
-    ☐ add react cra with tailwind css
-    ☐ @critical ws sample in react
-    ☐ add postgres SeaOrm or dead pool to work with citizen card
+    ✔ added upload to client.http from c3-backend @done(22-03-19 17:19)
+    ✔ add react cra with websockets @done(22-03-19 17:19)
+    ✔ awc request to unprotected route @done(22-03-19 19:14)
+    ✔ must use random key endpoint in ccp to prevent c++ hack/disassbler @done(22-03-19 19:14)
+    ☐ put config.json to be used with some meanful defaults
+    ☐ add postgres deadpool or SeaOrm or dead pool to work with citizen card
     ☐ @critical reuse config and parameters with meanful stuff for starter ex `initial filters file: '^.*c3-.*\.log$', line: '(?i)(.*)'`
     ☐ @critical remove config and other c3 and links related stuff, like tailor config
-
-    ☐ add from c3-updater
-      ☐ middleware::Logger
-      ☐ cra and react app
-      ☐ exec command
-      ☐ request some api add _test_actix_client _test_actix_client_service_health
-      ☐ endpoint get app-state / post app-state
+    ✔ add from c3-updater @done(22-03-19 17:20)
+    ✔ middleware::Logger @done(22-03-19 17:20)
+    ✔ cra and react app @done(22-03-19 17:20)
+    ✔ endpoint get app-state / post app-state @done(22-03-19 17:20)
+  Frontend:
+    ☐ tailwind
+    ☐ react useHttp request api button ws-echo and /ping
