@@ -1,7 +1,6 @@
 Project:
   Httpservice:
-    @critical create server dir/mod with server stuff and handlers, try to clean up main file
-    ☐ better logger?
+    ✔ create server dir/mod with server stuff and handlers, try to clean up main file @done(22-03-19 20:01)
     ✔ add random key endpoint @done(22-03-12 19:11)
     ✔ add multipart upload from rpi http server @done(22-03-12 23:05)
     ✔ add all new stuff from deadpool like time, redirect, 404 endpoint @done(22-03-12 23:41)
@@ -9,14 +8,14 @@ Project:
     ✔ add react cra with websockets @done(22-03-19 17:19)
     ✔ awc request to unprotected route @done(22-03-19 19:14)
     ✔ must use random key endpoint in ccp to prevent c++ hack/disassbler @done(22-03-19 19:14)
-    ☐ put config.json to be used with some meanful defaults
-    ☐ add postgres deadpool or SeaOrm or dead pool to work with citizen card
-    ☐ @critical reuse config and parameters with meanful stuff for starter ex `initial filters file: '^.*c3-.*\.log$', line: '(?i)(.*)'`
-    ☐ @critical remove config and other c3 and links related stuff, like tailor config
     ✔ add from c3-updater @done(22-03-19 17:20)
     ✔ middleware::Logger @done(22-03-19 17:20)
     ✔ cra and react app @done(22-03-19 17:20)
     ✔ endpoint get app-state / post app-state @done(22-03-19 17:20)
+    ☐ put config.json to be used with some meanful defaults
+    ☐ add postgres deadpool or SeaOrm or dead pool to work with citizen card
+    ☐ @critical reuse config and parameters with meanful stuff for starter ex `initial filters file: '^.*c3-.*\.log$', line: '(?i)(.*)'`
+    ☐ @critical remove config and other c3 and links related stuff, like tailor config
   Frontend:
-    ☐ tailwind
+    ✔ tailwind @done(22-03-19 20:01)
     ☐ react useHttp request api button ws-echo and /ping
