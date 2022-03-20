@@ -36,3 +36,6 @@ pub const RANDOM_STRING_GENERATOR_CHARSET: &[u8] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZa
 pub const RANDOM_STRING_GENERATOR_SIZE: usize = 64;
 // redirect
 pub const ENDPOINT_REDIRECT_TO: &'static str = "https://koakh.com";
+// spawn thread
+pub const SPAWN_THREAD_ENABLED: bool = false;
+pub const SPAWN_THREAD_DURATION_SECONDS: u64 = 30;

@@ -12,6 +12,7 @@ Project:
     ✔ middleware::Logger @done(22-03-19 17:20)
     ✔ cra and react app @done(22-03-19 17:20)
     ✔ endpoint get app-state / post app-state @done(22-03-19 17:20)
+    ✔ spawn with timer and with seconds and enabled disabled @done(22-03-20 17:43)
     ☐ put config.json to be used with some meanful defaults
     ☐ add postgres deadpool or SeaOrm or dead pool to work with citizen card
     ☐ @critical reuse config and parameters with meanful stuff for starter ex `initial filters file: '^.*c3-.*\.log$', line: '(?i)(.*)'`

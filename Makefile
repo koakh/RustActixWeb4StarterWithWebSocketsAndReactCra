@@ -41,6 +41,7 @@ startConfigServer:
 		RUST_LOG=$(RUST_LOG) \
 		LOG_DEFAULT_LEVEL=$(LOG_DEFAULT_LEVEL) \
 		LOGFILE_DEFAULT_LEVEL=$(LOGFILE_DEFAULT_LEVEL) \
+		REACT_APP_SHOW_DEBUG_IN_CONSOLE_LOG=true \
     cargo run -- \
 			"start-server" \
 			"-c" \

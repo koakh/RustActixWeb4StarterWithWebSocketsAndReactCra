@@ -13,7 +13,6 @@ use actix_web_actors::ws;
 use actix_web_httpauth::extractors::bearer::{BearerAuth, Config};
 use actix_web_httpauth::extractors::AuthenticationError;
 use actix_web_httpauth::middleware::HttpAuthentication;
-use linemux::MuxedLines;
 use log::{debug, error, info};
 use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
 use regex::Regex;
@@ -39,7 +38,7 @@ use actixweb4_starter::{
   app::{
     config::ConfigItem, init_log4rs, AppState, AppStateGlobal, Cli, ConfigState, APP_NAME, CONFIG_FILE_PATH, DEFAULT_CERT_FILE_NAME_CERT, DEFAULT_CERT_FILE_NAME_KEY, DEFAULT_CONFIG_PATH_SSL,
     DEFAULT_FILTER_FILE, DEFAULT_FILTER_LINE, DEFAULT_HTTP_SERVER_URI, DOWNLOAD_FILES_PATH, DOWNLOAD_URI_PATH, DOWNLOAD_URI_PATH_ABSOLUTE, FORMAT_DATE_TIME_FILE_NAME, HTTP_SERVER_API_KEY,
-    HTTP_SERVER_KEEP_ALIVE, LOG_ACTIXWEB_MIDDLEWARE_FORMAT, PUBLIC_URI_PATH, RANDOM_STRING_GENERATOR_CHARSET, RANDOM_STRING_GENERATOR_SIZE,
+    HTTP_SERVER_KEEP_ALIVE, LOG_ACTIXWEB_MIDDLEWARE_FORMAT, PUBLIC_URI_PATH, RANDOM_STRING_GENERATOR_CHARSET, RANDOM_STRING_GENERATOR_SIZE,SPAWN_THREAD_DURATION_SECONDS,SPAWN_THREAD_ENABLED,
   },
   enums::MessageToClientType,
   requests::{PostStateRequest, PostWsEchoRequest},
@@ -89,7 +88,27 @@ async fn main() -> std::io::Result<()> {
 
   // the trick for not lost connections sessions, is create ws_server outside of HttpServer::new, and use `move ||`
   let ws_server = WebServer::new().start();
-  let ws_server_spawn = ws_server.clone();
+  // spawn loop in parallel thread with async
+  if SPAWN_THREAD_ENABLED {
+    let ws_server_spawn = ws_server.clone();
+    spawn(async move {
+      let mut interval = time::interval(Duration::from_secs(SPAWN_THREAD_DURATION_SECONDS));
+      loop {
+        interval.tick().await;
+        // do something
+        let json = json!({ "message": "message from spawn thread" });
+        // let wsm: WebSocketMessage = serde_json::from_value(json).unwrap();
+        let msg_type = &format!("{}", MessageToClientType::Echo)[..];
+        let message_to_client = MessageToClient::new(msg_type, json);
+        // let message_to_client = MessageToClient::new("echo", json);
+        // websocket_srv.do_send(message_to_client);
+        match ws_server_spawn.send(message_to_client).await {
+          Ok(_) => {}
+          Err(e) => error!("{:?}", e),
+        };
+      }
+    });
+  }
 
   let cli = Cli::from_args();
   let mut current_config_file = String::from("");
@@ -128,16 +147,6 @@ async fn main() -> std::io::Result<()> {
   // init initial_filter_file and initial_filter_line from config references
   let initial_filter_file = config.filter_file.borrow().as_ref().unwrap().clone();
   let initial_filter_line = config.filter_line.borrow().as_ref().unwrap().clone();
-  // declare muxed lines
-  let mut lines = MuxedLines::new()?;
-  // extract a new vec from config input_files
-  let input_files = config.input_files.borrow().as_ref().unwrap().clone();
-  for f in input_files.to_vec() {
-    match lines.add_file(&f).await {
-      Ok(r) => debug!("{:?}", r),
-      Err(e) => error!("{:?}", e),
-    };
-  }
 
   //command line validation
   // bellow validation is handled by structOps with The argument '--files <input-files>...' requires at least 1 values, but only 0 was provided
@@ -158,50 +167,6 @@ async fn main() -> std::io::Result<()> {
   // out_message(format!("config: {:?}", config), 0);
   // out_message(format!("lines: {:?}", lines), 0);
   out_message(format!("initial filters file: '{}', line: '{}'", initial_filter_file.clone(), initial_filter_line.clone()), 0);
-  // the real and hard trick to use references of AppStateGlobal is clone the arc, one tip of mighty The0x539
-  let _ref_filter_file = data.filter_file.clone();
-  let _ref_filter_line = data.filter_line.clone();
-  let ref_regex_file = data.regex_file.clone();
-  let ref_regex_line = data.regex_line.clone();
-  // spawn loop in parallel thread with async
-  spawn(async move {
-    while let Ok(Some(line)) = lines.next_line().await {
-      // filter file
-      // out_message(
-      //   format!("filter file: {}, filter line: {}", &ref_filter_file.lock().unwrap().as_str(), &ref_filter_line.lock().unwrap().as_str()),
-      //   0,
-      // );
-      // without regex
-      // if line.source().display().to_string().to_lowercase().eq("") || line.source().display().to_string().to_lowercase().contains(&ref_filter_file.lock().unwrap().as_str()) {
-
-      // with regex
-      let match_file_re = ref_regex_file.lock().unwrap().is_match(&line.source().display().to_string());
-      if line.source().display().to_string().to_lowercase().eq("") || match_file_re {
-        // filter line
-        // without regex
-        // if line.line().to_string().to_lowercase().eq("") || line.line().to_string().to_lowercase().contains(&ref_filter_line.lock().unwrap().as_str()) {
-        // with regex
-        let match_line_re = ref_regex_line.lock().unwrap().is_match(&line.line().to_string());
-        if line.line().to_string().to_lowercase().eq("") || match_line_re {
-          // out_message(format!("source: {}, line: {}", line.source().display(), line.line()), 0);
-          // TODO: don't enable this, it will pollute and create some extra flood on syslog
-          // out_message(format!("{}", line.line()), 0);
-          // send message to client
-          let json = json!({ "message": line.line() });
-          // let wsm: WebSocketMessage = serde_json::from_value(json).unwrap();
-          let msg_type = &format!("{}", MessageToClientType::Echo)[..];
-          let message_to_client = MessageToClient::new(msg_type, json);
-          // let message_to_client = MessageToClient::new("echo", json);
-          // websocket_srv.do_send(message_to_client);
-          match ws_server_spawn.send(message_to_client).await {
-            Ok(_) => {}
-            Err(e) => error!("{:?}", e),
-          };
-        }
-      }
-      // out_message(format!("data: {:?}", &ref_filter_file.lock().unwrap()), 0);
-    }
-  });
 
   // authentication validator
   // required to implement ResponseError in src/app/errors.rs else we have a error
