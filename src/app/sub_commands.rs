@@ -1,7 +1,7 @@
 use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
-#[structopt(name = "actixweb4-starter", about = "critical-links cryptlex command line interface application")]
+#[structopt(name = "actixweb4-starter", about = "actixweb4-starter command line interface application")]
 
 pub enum Cli {
   #[structopt(name = "start-server")]
