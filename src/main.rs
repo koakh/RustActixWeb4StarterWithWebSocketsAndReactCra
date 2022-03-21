@@ -1,6 +1,4 @@
 #![allow(unused_imports)]
-// trick for .start() is start using actix::prelude::* and find the required import, ex Actor
-// find what is the required trait to not include all of them
 use actix::prelude::{Actor, Addr};
 use actix_cors::Cors;
 use actix_files::Files;
@@ -13,6 +11,7 @@ use actix_web_actors::ws;
 use actix_web_httpauth::extractors::bearer::{BearerAuth, Config};
 use actix_web_httpauth::extractors::AuthenticationError;
 use actix_web_httpauth::middleware::HttpAuthentication;
+use actix_web_static_files::ResourceFiles;
 use log::{debug, error, info};
 use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
 use regex::Regex;
@@ -32,17 +31,17 @@ use std::{
   sync::{Arc, Mutex},
 };
 use structopt::StructOpt;
-// // use local modules from mod.rs
-use actix_web_static_files::ResourceFiles;
+// use local modules from mod.rs
 use actixweb4_starter::{
   app::{
-    config::ConfigItem, init_log4rs, AppState, AppStateGlobal, Cli, ConfigState, APP_NAME, CONFIG_FILE_PATH, DEFAULT_CERT_FILE_NAME_CERT, DEFAULT_CERT_FILE_NAME_KEY, DEFAULT_CONFIG_PATH_SSL,
-    DEFAULT_FILTER_FILE, DEFAULT_FILTER_LINE, DEFAULT_HTTP_SERVER_URI, DOWNLOAD_FILES_PATH, DOWNLOAD_URI_PATH, DOWNLOAD_URI_PATH_ABSOLUTE, FORMAT_DATE_TIME_FILE_NAME, HTTP_SERVER_API_KEY,
-    HTTP_SERVER_KEEP_ALIVE, LOG_ACTIXWEB_MIDDLEWARE_FORMAT, PUBLIC_URI_PATH, RANDOM_STRING_GENERATOR_CHARSET, RANDOM_STRING_GENERATOR_SIZE,SPAWN_THREAD_DURATION_SECONDS,SPAWN_THREAD_ENABLED,
+    config::ConfigItem, init_log4rs, AppState, AppStateGlobal, Cli, ConfigState, API_PATH, APP_NAME, CONFIG_FILE_PATH, DEFAULT_CERT_FILE_NAME_CERT, DEFAULT_CERT_FILE_NAME_KEY,
+    DEFAULT_CONFIG_PATH_SSL, DEFAULT_FILTER_FILE, DEFAULT_FILTER_LINE, DEFAULT_HTTP_SERVER_URI, DOWNLOAD_FILES_PATH, DOWNLOAD_URI_PATH, DOWNLOAD_URI_PATH_ABSOLUTE, FORMAT_DATE_TIME_FILE_NAME,
+    HTTP_SERVER_API_KEY, HTTP_SERVER_KEEP_ALIVE, LOG_ACTIXWEB_MIDDLEWARE_FORMAT, PUBLIC_URI_PATH, RANDOM_STRING_GENERATOR_CHARSET, RANDOM_STRING_GENERATOR_SIZE, SPAWN_THREAD_DURATION_SECONDS,
+    SPAWN_THREAD_ENABLED,
   },
   enums::MessageToClientType,
   requests::{PostStateRequest, PostWsEchoRequest},
-  responses::{ApiKeyResponse, AppStateResponse, BackupLogResponse, ErrorMessageResponse, GetStateResponse, MessageResponse, PostStateResponse, PostWsEchoResponse},
+  responses::{ApiKeyResponse, AppStateResponse, ErrorMessageResponse, GetStateResponse, MessageResponse, PostStateResponse, PostWsEchoResponse},
   server::{get_config, get_state, health_check, not_found, post_state, post_state_full, redirect, test_awc, upload, ws_echo},
   util::{
     execute_command, execute_command_shortcut, generate_random_string, get_config_files_from_regex, get_config_item, get_config_state, get_current_formatted_date, out_message, pathbuf_to_str,
@@ -228,8 +227,7 @@ async fn main() -> std::io::Result<()> {
       .service(Files::new(format!("{}", DOWNLOAD_URI_PATH).as_str(), format!("{}{}", DOWNLOAD_FILES_PATH, DOWNLOAD_URI_PATH).as_str()))
       // scoped
       .service(
-        // TODO: use /api on constants and ENV VAR ex /api/v1
-        web::scope("/api")
+        web::scope(API_PATH)
           // authentication middleware, warn: Bearer must be uppercased Bearer to work with actix-web-httpauth, bearer fails
           .wrap(HttpAuthentication::bearer(validator))
           .service(post_state_full)
