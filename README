@@ -1,29 +1,52 @@
 # README
 
-## Koakh actixweb4-starter
+## Koakh ActixWeb 4 Starter (With Cra 5.0 and Tailwind)
 
 a simples actixweb4 starter with rest api, websockets server, and a connected react frontend
+
+## Config
+
+Env Variables
+
+- HTTP_SERVER_URI
+- HTTP_SERVER_API_KEY
+- CONFIG_PATH_SSL
+- CERT_FILE_NAME_KEY
+- CERT_FILE_NAME_CERT
+- LOG_LEVEL
+- LOGFILE_LEVEL
+- LOG_ACTIXWEB_MIDDLEWARE_FORMAT
+- FILTER_FILE
+- FILTER_LINE
 
 ## Features
 
 ## Backend
 
-- [X] https/tls rest server
-- [X] http/tls websocket server
-- [X] make debian and systemd service
+- [X] https/tls rest/websocket server
 - [X] protected endpoint with bearer auth apikey
 - [X] upload multipart files
 - [X] cors
-- [X] not found route
-- [X] redirect to
 - [X] keep alive time
+- [X] some pre defined routes like /ping, /ws-echo, etc
+- [X] not found route
+- [X] app state
+- [X] tokio spawn thread
+- [X] redirect to
 - [X] awc external api request
 - [X] json config file and cli arguments (commented)
-- [X] other stuff
 - [X] download/static files with 
-- [-] wip: show files listing
-## Implemented Frontend
+- [X] make debian and systemd service
+- [X] vscode rest client request file
+- [X] makefile
+- [X] environment variables for configuration
+- [X] docker image and docker-compose
+- [ ] wip: show files listing
+- [X] other stuff
 
+## Frontend
+
+- [X] react dev environment with hot reaload and vscode debugger
 - [X] create react app static files
 - [X] connected to websockets and receive message on /ws-echo endpoint
 - [X] websocket client with reconnect
@@ -31,8 +54,39 @@ a simples actixweb4 starter with rest api, websockets server, and a connected re
 - [X] tailwind
 - [X] other stuff
 
-## Todo
+## How to use
 
-- [-] postgres with deadpool
-- [X] docker image and docker-compose
-- [-] docker-compose config file with postgres
+```shell
+# clone
+$ git clone https://github.com/koakh/RustActixWeb4StarterWithWebSocketsAndReactCra.git myNewProject
+# enter path
+$ cd myNewProject
+# open project in fav editor ex
+$ code .
+```
+
+1. edit `.git/config` and remove remote origin
+
+```
+[remote "origin"]
+	url = https://github.com/koakh/RustActixWeb4StarterWithWebSocketsAndReactCra.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+```
+
+2. clean up `README` file
+
+3. edit Cargo.toml and change `maintainer`, `copyright`, `extended-description`, remove unused crates etc
+
+4. find and replace all `actixweb4-starter` with from ex `ccard-identity-client`
+
+5. find and replace all `actixweb4_starter` with from ex `ccard_identity_client`
+
+6. find and replace all `8543` with from ex `8643`
+
+7. find and replace all `8545` with from ex `8645` (used only in startReactClient `PORT`)
+
+8. change constants.rs values like `APP_NAME`, `DEFAULT_HTTP_SERVER_URI`, `HTTP_SERVER_API_KEY` and others   
+
+9. change same value in `Makefile`
+
+10. 

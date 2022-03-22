@@ -35,9 +35,9 @@ use structopt::StructOpt;
 use actixweb4_starter::{
   app::{
     config::ConfigItem, init_log4rs, AppState, AppStateGlobal, Cli, ConfigState, API_PATH, APP_NAME, CONFIG_FILE_PATH, DEFAULT_CERT_FILE_NAME_CERT, DEFAULT_CERT_FILE_NAME_KEY,
-    DEFAULT_CONFIG_PATH_SSL, DEFAULT_FILTER_FILE, DEFAULT_FILTER_LINE, DEFAULT_HTTP_SERVER_URI, DOWNLOAD_FILES_PATH, DOWNLOAD_URI_PATH, DOWNLOAD_URI_PATH_ABSOLUTE, FORMAT_DATE_TIME_FILE_NAME,
-    HTTP_SERVER_API_KEY, HTTP_SERVER_KEEP_ALIVE, LOG_ACTIXWEB_MIDDLEWARE_FORMAT, PUBLIC_URI_PATH, RANDOM_STRING_GENERATOR_CHARSET, RANDOM_STRING_GENERATOR_SIZE, SPAWN_THREAD_DURATION_SECONDS,
-    SPAWN_THREAD_ENABLED,
+    DEFAULT_CONFIG_PATH_SSL, DEFAULT_FILTER_FILE, DEFAULT_FILTER_LINE, DEFAULT_HTTP_SERVER_API_KEY, DEFAULT_HTTP_SERVER_URI, DEFAULT_LOG_ACTIXWEB_MIDDLEWARE_FORMAT, DOWNLOAD_FILES_PATH,
+    DOWNLOAD_URI_PATH, DOWNLOAD_URI_PATH_ABSOLUTE, FORMAT_DATE_TIME_FILE_NAME, HTTP_SERVER_KEEP_ALIVE, PUBLIC_URI_PATH, RANDOM_STRING_GENERATOR_CHARSET, RANDOM_STRING_GENERATOR_SIZE,
+    SPAWN_THREAD_DURATION_SECONDS, SPAWN_THREAD_ENABLED,
   },
   enums::MessageToClientType,
   requests::{PostStateRequest, PostWsEchoRequest},
@@ -58,10 +58,12 @@ static SERVER_COUNTER: AtomicUsize = AtomicUsize::new(0);
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
   // env vars
-  let http_server_uri = env::var("HTTP_SERVER_URI").unwrap_or(DEFAULT_HTTP_SERVER_URI.to_string());
+  let http_server_uri = env::var("HTTP_SERVER_URI").unwrap_or(DEFAULT_HTTP_SERVER_URI.to_string());  
   let config_path_ssl = env::var("CONFIG_PATH_SSL").unwrap_or(DEFAULT_CONFIG_PATH_SSL.to_string());
-  let default_cert_file_name_key = env::var("CERT_FILE_NAME_KEY").unwrap_or(DEFAULT_CERT_FILE_NAME_KEY.to_string());
-  let default_cert_file_name_cert = env::var("CERT_FILE_NAME_CERT").unwrap_or(DEFAULT_CERT_FILE_NAME_CERT.to_string());
+  let cert_file_name_key = env::var("CERT_FILE_NAME_KEY").unwrap_or(DEFAULT_CERT_FILE_NAME_KEY.to_string());
+  let cert_file_name_cert = env::var("CERT_FILE_NAME_CERT").unwrap_or(DEFAULT_CERT_FILE_NAME_CERT.to_string());
+  let log_actixweb_middleware_format = env::var("LOG_ACTIXWEB_MIDDLEWARE_FORMAT").unwrap_or(DEFAULT_LOG_ACTIXWEB_MIDDLEWARE_FORMAT.to_string());
+
   // init_log()
   // init log4rs
   init_log4rs().expect("can't initialize logger");
@@ -79,8 +81,8 @@ async fn main() -> std::io::Result<()> {
   // EOF : UNCOMMENT to use config
 
   // config https ssl keys
-  let cert_file_name_key = format!("{}/{}", config_path_ssl, default_cert_file_name_key);
-  let cert_file_name_cert = format!("{}/{}", config_path_ssl, default_cert_file_name_cert);
+  let cert_file_name_key = format!("{}/{}", config_path_ssl, cert_file_name_key);
+  let cert_file_name_cert = format!("{}/{}", config_path_ssl, cert_file_name_cert);
   let mut builder = SslAcceptor::mozilla_intermediate(SslMethod::tls()).unwrap();
   builder.set_private_key_file(cert_file_name_key.clone(), SslFiletype::PEM).unwrap();
   builder.set_certificate_chain_file(cert_file_name_cert.clone()).unwrap();
@@ -183,7 +185,8 @@ async fn main() -> std::io::Result<()> {
   // required to implement ResponseError in src/app/errors.rs else we have a error
   // Err(AuthenticationError::from(config).into())
   async fn validator(req: ServiceRequest, credentials: BearerAuth) -> Result<ServiceRequest, ActixError> {
-    if credentials.token() == HTTP_SERVER_API_KEY.to_string() {
+    let http_server_api_key = env::var("HTTP_SERVER_API_KEY").unwrap_or(DEFAULT_HTTP_SERVER_API_KEY.to_string());
+    if credentials.token() == http_server_api_key.to_string() {
       Ok(req)
     } else {
       let config = req
@@ -214,7 +217,7 @@ async fn main() -> std::io::Result<()> {
       .wrap(cors)
       // enable logger
       // .wrap(middleware::Logger::default())
-      .wrap(middleware::Logger::new(LOG_ACTIXWEB_MIDDLEWARE_FORMAT))
+      .wrap(middleware::Logger::new(log_actixweb_middleware_format.as_str()))
       // new actixweb MUST USE everything wrapped in Data::new() this is the solution for websockets connection error
       .app_data(Data::new(AppState {
         server_id: SERVER_COUNTER.fetch_add(1, Ordering::SeqCst),

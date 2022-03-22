@@ -1,5 +1,5 @@
 use crate::{
-  app::{LOGFILE_DEFAULT_LEVEL, LOG_DEFAULT_LEVEL, LOG_FILE_PATH},
+  app::{DEFAULT_LOGFILE_LEVEL, DEFAULT_LOG_LEVEL, LOG_FILE_PATH},
   util::file_exists,
 };
 use log::{debug, LevelFilter, SetLoggerError};
@@ -25,9 +25,9 @@ use std::fs;
 
 // log4rs logger :shared with c3-updater and actixweb4-starter
 pub fn init_log4rs() -> Result<(), SetLoggerError> {
-  let log_default_level = std::env::var("LOG_DEFAULT_LEVEL").unwrap_or(LOG_DEFAULT_LEVEL.to_string());
-  let logfile_default_level = std::env::var("LOGFILE_DEFAULT_LEVEL").unwrap_or(LOGFILE_DEFAULT_LEVEL.to_string());
-  // debug!("log env LOG_DEFAULT_LEVEL: '{}', LOGFILE_DEFAULT_LEVEL: '{}'", log_default_level, logfile_default_level);
+  let default_log_level = std::env::var("LOG_LEVEL").unwrap_or(DEFAULT_LOG_LEVEL.to_string());
+  let default_logfile_level = std::env::var("LOGFILE_LEVEL").unwrap_or(DEFAULT_LOGFILE_LEVEL.to_string());
+  // debug!("log env DEFAULT_LOG_LEVEL: '{}', DEFAULT_LOGFILE_LEVEL: '{}'", log_default_level, logfile_default_level);
   // closure to get LevelFilter from env string
   let get_log_level = |env_level: String| -> LevelFilter {
     match env_level.to_uppercase().as_str() {
@@ -40,8 +40,8 @@ pub fn init_log4rs() -> Result<(), SetLoggerError> {
       _ => LevelFilter::Error,
     }
   };
-  let log_level = get_log_level(log_default_level);
-  let logfile_level = get_log_level(logfile_default_level);
+  let log_level = get_log_level(default_log_level);
+  let logfile_level = get_log_level(default_logfile_level);
   // always delete old log
   if file_exists(LOG_FILE_PATH) {
     debug!("removing old log file:{}", LOG_FILE_PATH);

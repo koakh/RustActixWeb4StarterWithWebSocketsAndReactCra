@@ -84,7 +84,7 @@ assets = [
 #   "/etc/actixweb4-starter/config.json"
 # ]
 extended-description = """\
-A systemd service to ingest and propgate system logs to websocket clients.\
+a simples actixweb4 starter with rest api, websockets server, and a connected react frontend.\
 Rest api, websockets and react frontend."""
 # license=""
 # license-file = ["LICENSE", "4"]

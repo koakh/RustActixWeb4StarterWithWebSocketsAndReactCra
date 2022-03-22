@@ -16,8 +16,8 @@ KillMode=process
 
 # Environment variables:
 # override defaults
-# Environment=LOG_DEFAULT_LEVEL=DEBUG
-# Environment=LOGFILE_DEFAULT_LEVEL=DEBUG
+# Environment=DEFAULT_LOG_LEVEL=DEBUG
+# Environment=DEFAULT_LOGFILE_LEVEL=DEBUG
 
 # Allow many incoming connections
 LimitNOFILE=infinity

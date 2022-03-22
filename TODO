@@ -13,12 +13,14 @@ Project:
     ✔ cra and react app @done(22-03-19 17:20)
     ✔ endpoint get app-state / post app-state @done(22-03-19 17:20)
     ✔ spawn with timer and with seconds and enabled disabled @done(22-03-20 17:43)
+    ✔ HTTP_SERVER_API_KEY, DEFAULT_LOG_ACTIXWEB_MIDDLEWARE_FORMAT must be defined in env variables @done(22-03-22 22:58)
+    ☐ postgres with deadpool
+    ☐ docker-compose config file with postgres
     ☐ finish TODO:'s
     ☐ put config.json to be used with some meanful defaults
       ☐ @critical reuse config and parameters with meanful stuff for starter ex `initial filters file: '^.*c3-.*\.log$', line: '(?i)(.*)'`
       ☐ @critical remove config and other c3 and links related stuff, like tailor config
       ☐ ex downloadPath and use downloads
-    ☐ add postgres deadpool or SeaOrm or dead pool to work with citizen card
   Frontend:
     ✔ tailwind @done(22-03-19 20:01)
     ✔ react useHttp request api button ws-echo and /ping @done(22-03-22 00:38)
