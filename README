@@ -1,13 +1,38 @@
 # README
 
-Koakh actixweb4-starter / started from c3-system-tailor
+## Koakh actixweb4-starter
 
-find: c3-system-tailor
-replace: actixweb4-starter
+a simples actixweb4 starter with rest api, websockets server, and a connected react frontend
 
-find: c3_system_tailor
-replace: actixweb4_starter
+## Features
 
-// pub const LOG_FILE_PATH: &'static str = "/var/log/actixweb4-starter.log";
-pub const LOG_FILE_PATH: &'static str = "/tmp/actixweb4-starter.log";
+## Backend
 
+- [X] https/tls rest server
+- [X] http/tls websocket server
+- [X] make debian and systemd service
+- [X] protected endpoint with bearer auth apikey
+- [X] upload multipart files
+- [X] cors
+- [X] not found route
+- [X] redirect to
+- [X] keep alive time
+- [X] awc external api request
+- [X] json config file and cli arguments (commented)
+- [X] other stuff
+- [X] download/static files with 
+- [-] wip: show files listing
+## Implemented Frontend
+
+- [X] create react app static files
+- [X] connected to websockets and receive message on /ws-echo endpoint
+- [X] websocket client with reconnect
+- [X] request server api /ws-echo and /ping
+- [X] tailwind
+- [X] other stuff
+
+## Todo
+
+- [-] postgres with deadpool
+- [X] docker image and docker-compose
+- [-] docker-compose config file with postgres
