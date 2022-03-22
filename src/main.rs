@@ -66,15 +66,17 @@ async fn main() -> std::io::Result<()> {
   // init log4rs
   init_log4rs().expect("can't initialize logger");
 
-  // default config, must be implicit override
-  let mut config = ConfigState {
-    filter_file: Rc::new(RefCell::new(Some(String::from(DEFAULT_FILTER_FILE)))),
-    filter_line: Rc::new(RefCell::new(Some(String::from(DEFAULT_FILTER_LINE)))),
-    input_files: Rc::new(RefCell::new(Some(vec![
-      // PathBuf::from("/var/log/syslog".to_string()),
-    ]))),
-    configuration: Rc::new(RefCell::new(vec![])),
-  };
+  // BOF : UNCOMMENT to use config
+  // // default config, must be implicit override
+  // let mut config = ConfigState {
+  //   filter_file: Rc::new(RefCell::new(Some(String::from(DEFAULT_FILTER_FILE)))),
+  //   filter_line: Rc::new(RefCell::new(Some(String::from(DEFAULT_FILTER_LINE)))),
+  //   input_files: Rc::new(RefCell::new(Some(vec![
+  //     // PathBuf::from("/var/log/syslog".to_string()),
+  //   ]))),
+  //   configuration: Rc::new(RefCell::new(vec![])),
+  // };
+  // EOF : UNCOMMENT to use config
 
   // config https ssl keys
   let cert_file_name_key = format!("{}/{}", config_path_ssl, default_cert_file_name_key);
@@ -110,42 +112,49 @@ async fn main() -> std::io::Result<()> {
   }
 
   let cli = Cli::from_args();
+  #[allow(unused_mut)]
   let mut current_config_file = String::from("");
   match &cli {
     Cli::StartHttpServer {
-      config_file,
-      input_files,
-      filter_file,
-      filter_line,
+      // config_file,
+      // BOF : UNCOMMENT to use config
+      // input_files,
+      // filter_file,
+      // filter_line,
+      // BOF : UNCOMMENT to use config
     } => {
-      // use files and filters: priority is the files and filters
-      if !input_files.is_empty() {
-        // override default config
-        config.filter_file = Rc::new(RefCell::new(Some(String::from(filter_file))));
-        config.filter_line = Rc::new(RefCell::new(Some(String::from(filter_line))));
-        config.input_files = Rc::new(RefCell::new(Some(input_files.to_vec())));
-      }
-      // use config
-      else {
-        current_config_file = pathbuf_to_str(config_file.as_ref().unwrap());
-        match read_config(current_config_file.as_str()) {
-          // override default config
-          Ok(c) => {
-            config = c;
-          }
-          // clean exit
-          Err(e) => {
-            eprintln!("error: {:?}", e);
-            exit(0x0100);
-          }
-        };
-      };
+      // BOF : UNCOMMENT to use config
+      // // use files and filters: priority is the files and filters
+      // if !input_files.is_empty() {
+      //   // override default config
+      //   config.filter_file = Rc::new(RefCell::new(Some(String::from(filter_file))));
+      //   config.filter_line = Rc::new(RefCell::new(Some(String::from(filter_line))));
+      //   config.input_files = Rc::new(RefCell::new(Some(input_files.to_vec())));
+      // }
+      // // use config
+      // else {
+      //   current_config_file = pathbuf_to_str(config_file.as_ref().unwrap());
+      //   match read_config(current_config_file.as_str()) {
+      //     // override default config
+      //     Ok(c) => {
+      //       config = c;
+      //     }
+      //     // clean exit
+      //     Err(e) => {
+      //       eprintln!("error: {:?}", e);
+      //       exit(0x0100);
+      //     }
+      //   };
+      // };
+      // EOF : UNCOMMENT to use config
     }
   }
 
-  // init initial_filter_file and initial_filter_line from config references
-  let initial_filter_file = config.filter_file.borrow().as_ref().unwrap().clone();
-  let initial_filter_line = config.filter_line.borrow().as_ref().unwrap().clone();
+  // BOF : UNCOMMENT to use config
+  // // init initial_filter_file and initial_filter_line from config references
+  // let initial_filter_file = config.filter_file.borrow().as_ref().unwrap().clone();
+  // let initial_filter_line = config.filter_line.borrow().as_ref().unwrap().clone();
+  // EOF : UNCOMMENT to use config
 
   //command line validation
   // bellow validation is handled by structOps with The argument '--files <input-files>...' requires at least 1 values, but only 0 was provided
@@ -155,17 +164,20 @@ async fn main() -> std::io::Result<()> {
 
   let data = web::Data::new(AppStateGlobal {
     counter: Mutex::new(0),
-    filter_file: Arc::new(Mutex::new(String::from(initial_filter_file.clone()))),
-    filter_line: Arc::new(Mutex::new(String::from(initial_filter_line.clone()))),
-    regex_file: Arc::new(Mutex::new(Regex::new(initial_filter_file.as_str()).unwrap())),
-    regex_line: Arc::new(Mutex::new(Regex::new(initial_filter_line.as_str()).unwrap())),
     config_file: Arc::new(Mutex::new(Some(current_config_file))),
+    // BOF : UNCOMMENT to use config
+    // filter_file: Arc::new(Mutex::new(String::from(initial_filter_file.clone()))),
+    // filter_line: Arc::new(Mutex::new(String::from(initial_filter_line.clone()))),
+    // regex_file: Arc::new(Mutex::new(Regex::new(initial_filter_file.as_str()).unwrap())),
+    // regex_line: Arc::new(Mutex::new(Regex::new(initial_filter_line.as_str()).unwrap())),
+    // EOF : UNCOMMENT to use config
   });
 
   // check current config
   // out_message(format!("config: {:?}", config), 0);
   // out_message(format!("lines: {:?}", lines), 0);
-  out_message(format!("initial filters file: '{}', line: '{}'", initial_filter_file.clone(), initial_filter_line.clone()), 0);
+  // UNCOMMENT to use config
+  // out_message(format!("initial filters file: '{}', line: '{}'", initial_filter_file.clone(), initial_filter_line.clone()), 0);
 
   // authentication validator
   // required to implement ResponseError in src/app/errors.rs else we have a error

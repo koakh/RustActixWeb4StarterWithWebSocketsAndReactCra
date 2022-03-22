@@ -99,20 +99,6 @@ Authorization: Bearer {{apiKey}}
 { 
 }
 
-### buildBackupLog
-// @name buildLogBackup
-
-POST {{uri}}/backup-log HTTP/1.1
-Content-Type: {{contentType}}
-Authorization: Bearer {{apiKey}}
-
-{
-  // "key": "all"
-  // "key" : "squid-all"
-  "key" : "squid-cache"
-  // "key" : "c3-microcloud-backend"
-}
-
 ### test endpoints currently disabled
 
 ### greet

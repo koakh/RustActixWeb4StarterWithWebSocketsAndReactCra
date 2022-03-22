@@ -46,9 +46,11 @@ startConfigServer:
 		REACT_APP_SHOW_DEBUG_IN_CONSOLE_LOG=true \
 		REACT_APP_HTTP_SERVER_API_KEY=$(HTTP_SERVER_API_KEY) \
     cargo run -- \
-			"start-server" \
-			"-c" \
-			"./config/config.json"
+			"start-server"
+# BOF : UNCOMMENT to use config
+#			"-c" \
+#			"./config/config.json"
+# EOF : UNCOMMENT to use config
 
 startConfigServerSudo:
 	@cargo build && \
@@ -61,9 +63,11 @@ startConfigServerSudo:
 		LOGFILE_DEFAULT_LEVEL=$(LOGFILE_DEFAULT_LEVEL) \
 		REACT_APP_HTTP_SERVER_API_KEY=$(HTTP_SERVER_API_KEY) \
 		target/debug/actixweb4-starter \
-			"start-server" \
-			"-c" \
-			"/etc/actixweb4-starter/config.json"
+			"start-server"
+# BOF : UNCOMMENT to use config
+#			"-c" \
+#			"/etc/actixweb4-starter/config.json"
+# BOF : UNCOMMENT to use config
 
 # used to debug frontend with hotReload
 startReactClient:

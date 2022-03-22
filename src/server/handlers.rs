@@ -7,6 +7,7 @@ use actix_web::{
 };
 use awc::Client;
 use log::{debug, error};
+#[allow(unused_imports)]
 use regex::Regex;
 use serde_json::json;
 
@@ -79,21 +80,25 @@ pub async fn post_state_full(msg: web::Json<PostStateRequest>, data: web::Data<A
   // access counter inside MutexGuard
   *counter += 1;
 
-  if !msg.filter_file.eq("") {
-    let mut filter_file = app_data.filter_file.lock().unwrap();
-    let mut regex_file = app_data.regex_file.lock().unwrap();
-    // access filter inside MutexGuard
-    *filter_file = msg.filter_file.clone();
-    *regex_file = Regex::new(msg.filter_file.clone().as_str()).unwrap();
-  }
+  // BOF : UNCOMMENT to use config
+  // if !msg.filter_file.eq("") {
+  //   let mut filter_file = app_data.filter_file.lock().unwrap();
+  //   let mut regex_file = app_data.regex_file.lock().unwrap();
+  //   // access filter inside MutexGuard
+  //   *filter_file = msg.filter_file.clone();
+  //   *regex_file = Regex::new(msg.filter_file.clone().as_str()).unwrap();
+  // }
+  // EOF : UNCOMMENT to use config
 
-  if !msg.filter_line.eq("") {
-    let mut filter_line = app_data.filter_line.lock().unwrap();
-    let mut regex_line = app_data.regex_line.lock().unwrap();
-    // access filter inside MutexGuard
-    *filter_line = msg.filter_line.clone();
-    *regex_line = Regex::new(msg.filter_line.clone().as_str()).unwrap();
-  }
+  // BOF : UNCOMMENT to use config
+  // if !msg.filter_line.eq("") {
+  //   let mut filter_line = app_data.filter_line.lock().unwrap();
+  //   let mut regex_line = app_data.regex_line.lock().unwrap();
+  //   // access filter inside MutexGuard
+  //   *filter_line = msg.filter_line.clone();
+  //   *regex_line = Regex::new(msg.filter_line.clone().as_str()).unwrap();
+  // }
+  // EOF : UNCOMMENT to use config
 
   // workers state
   let request_count = data.request_count.get() + 1;
@@ -120,27 +125,31 @@ pub async fn post_state(msg: web::Json<PostStateRequest>, data: web::Data<AppSta
   // access counter inside MutexGuard
   *counter += 1;
 
-  if !msg.filter_file.eq("") {
-    let mut filter_file = app_data.filter_file.lock().unwrap();
-    let mut regex_file = app_data.regex_file.lock().unwrap();
-    // access filter inside MutexGuard
-    *filter_file = msg.filter_file.clone();
-    match Regex::new(msg.filter_file.clone().as_str()) {
-      Ok(r) => *regex_file = r,
-      Err(e) => return HttpResponse::InternalServerError().json(MessageResponse { message: format!("{}", e) }),
-    }
-  }
+  // BOF : UNCOMMENT to use config
+  // if !msg.filter_file.eq("") {
+  //   let mut filter_file = app_data.filter_file.lock().unwrap();
+  //   let mut regex_file = app_data.regex_file.lock().unwrap();
+  //   // access filter inside MutexGuard
+  //   *filter_file = msg.filter_file.clone();
+  //   match Regex::new(msg.filter_file.clone().as_str()) {
+  //     Ok(r) => *regex_file = r,
+  //     Err(e) => return HttpResponse::InternalServerError().json(MessageResponse { message: format!("{}", e) }),
+  //   }
+  // }
+  // EOF : UNCOMMENT to use config
 
-  if !msg.filter_line.eq("") {
-    let mut filter_line = app_data.filter_line.lock().unwrap();
-    let mut regex_line = app_data.regex_line.lock().unwrap();
-    // access filter inside MutexGuard
-    *filter_line = msg.filter_line.clone();
-    match Regex::new(msg.filter_line.clone().as_str()) {
-      Ok(r) => *regex_line = r,
-      Err(e) => return HttpResponse::InternalServerError().json(ErrorMessageResponse { message: format!("{}", e) }),
-    }
-  }
+  // BOF : UNCOMMENT to use config
+  // if !msg.filter_line.eq("") {
+  //   let mut filter_line = app_data.filter_line.lock().unwrap();
+  //   let mut regex_line = app_data.regex_line.lock().unwrap();
+  //   // access filter inside MutexGuard
+  //   *filter_line = msg.filter_line.clone();
+  //   match Regex::new(msg.filter_line.clone().as_str()) {
+  //     Ok(r) => *regex_line = r,
+  //     Err(e) => return HttpResponse::InternalServerError().json(ErrorMessageResponse { message: format!("{}", e) }),
+  //   }
+  // }
+  // EOF : UNCOMMENT to use config
 
   // workers state
   let request_count = data.request_count.get() + 1;
@@ -166,8 +175,10 @@ pub async fn get_state(app_data: web::Data<AppStateGlobal>) -> Result<web::Json<
   }
 
   Ok(web::Json(GetStateResponse {
-    filter_file: app_data.filter_file.lock().unwrap().to_string(),
-    filter_line: app_data.filter_line.lock().unwrap().to_string(),
+    // BOF : UNCOMMENT to use config
+    // filter_file: app_data.filter_file.lock().unwrap().to_string(),
+    // filter_line: app_data.filter_line.lock().unwrap().to_string(),
+    // EOF : UNCOMMENT to use config
     config_file: config_file.to_string(),
   }))
 }
