@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { log } from '../utils';
+import { log } from '../utils/main';
 
 // NOTES
 // use NODE_TLS_REJECT_UNAUTHORIZED="0" to ignore ssl certificates, else we get a 500 status code
@@ -15,7 +15,7 @@ export enum HttpMethod {
   OPTIONS = 'OPTIONS',
   TRACE = 'TRACE',
   PATCH = 'PATCH',
-};
+}
 
 export interface RequestConfig {
   url: string,
@@ -34,7 +34,7 @@ export const useHttp = () => {
   const sendRequest = useCallback(async (requestConfig: RequestConfig, transformFunction: (data: any) => any, errorFunction?: (error: Error) => void) => {
     if (requestConfig.debug) {
       log(`requestConfig: [${JSON.stringify(requestConfig, undefined, 2)}]`);
-    };
+    }
     setIsLoading(true);
     setError(null);
     try {
@@ -54,10 +54,10 @@ export const useHttp = () => {
 
       const data = await fetchResult.json();
       transformFunction(data);
-    } catch (error: any) {
-      setError(error.message || 'Something went wrong!');
+    } catch (err: any) {
+      setError(err.message || 'Something went wrong!');
       if (typeof errorFunction === 'function') {
-        errorFunction(error);
+        errorFunction(err);
       }
     }
     setIsLoading(false);

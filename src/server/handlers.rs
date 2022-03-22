@@ -213,7 +213,7 @@ pub async fn test_awc(msg: web::Json<PostAwcUriRequest>) -> Result<HttpResponse,
       message: "request successful".to_string(),
     })),
     Err(e) => Ok(HttpResponse::build(StatusCode::NOT_FOUND).json(MessageResponse {
-      message: format!("request failed to: {}", e),
+      message: format!("request failed to '{}' error {}", msg.uri.as_str(), e),
     })),
   }
 }

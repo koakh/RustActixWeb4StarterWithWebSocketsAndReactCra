@@ -1,24 +1,23 @@
 import { appConstants as c } from '../app/constants';
 
-export const log = (message: any, context?: String) => {
+export const log = (message: any, context?: string) => {
   const showDebugInConsoleLog = (c.VALUES.showDebugInConsoleLog) ? true : false;
   if (showDebugInConsoleLog) {
     let outContext;
     let outMessage = message;
     if (typeof message === 'object') {
       outMessage = JSON.stringify(outMessage, undefined, 2);
-    };
+    }
     outContext = context ? `[${context}] : ` : '';
     console.log(`${outContext}${outMessage}`);
   }
-};
+}
 
 export const getUriHost = (): string => {
   // log(`PORT: ${process.env.REACT_APP_PORT} && REACT_APP_PORT_WS: ${process.env.REACT_APP_PORT_WS}`);
-  let uriHost = (process.env.REACT_APP_HOST_WS && process.env.REACT_APP_PORT_WS)
+  return (process.env.REACT_APP_HOST_WS && process.env.REACT_APP_PORT_WS)
     ? `${process.env.REACT_APP_HOST_WS}:${process.env.REACT_APP_PORT_WS}`
     : window.location.host;
-  return uriHost;
 };
 
 /**
@@ -49,8 +48,7 @@ export const getUriBase = (): string => {
  */
 export const getWsUri = (): string => {
   // eslint-disable-next-line no-mixed-operators
-  let wsUri = (window.location.protocol === 'https:' && 'wss://' || 'ws://') + getUriHost() + '/ws/';
-  return wsUri;
+  return (window.location.protocol === 'https:' && 'wss://' || 'ws://') + getUriHost() + '/ws/';
 };
 
 export const getQueryVariable = (variable: string) => {

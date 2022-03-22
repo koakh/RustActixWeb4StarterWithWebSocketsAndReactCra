@@ -71,7 +71,7 @@ pub fn execute_command_shortcut(command: &str) -> Result<String, String> {
 }
 
 pub fn execute_syslog_start_stop(action: &str) -> Result<String, String> {
-  // use sudo to prevent intereactivity in debug
+  // use sudo to prevent interactivity in debug
   let command = format!("sudo systemctl {} syslog.socket rsyslog.service", action);
   // let propagate the error
   execute_command_shortcut(&command)

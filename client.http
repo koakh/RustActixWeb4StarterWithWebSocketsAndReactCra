@@ -33,7 +33,7 @@ Content-Type: {{contentType}}
 Authorization: Bearer {{apiKey}}
 
 {
-  "uri": "https://www.koakh.com"
+  "uri": "https://google.com"
 }
 
 ### uploadFile

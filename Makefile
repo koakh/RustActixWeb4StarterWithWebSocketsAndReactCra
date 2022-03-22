@@ -27,6 +27,8 @@ startServer:
 		CONFIG_PATH_SSL=$(CONFIG_PATH_SSL) \
 		CERT_FILE_NAME_KEY=$(CERT_FILE_NAME_KEY) \
 		CERT_FILE_NAME_CERT=$(CERT_FILE_NAME_CERT) \
+		REACT_APP_SHOW_DEBUG_IN_CONSOLE_LOG=true \
+		REACT_APP_HTTP_SERVER_API_KEY=$(HTTP_SERVER_API_KEY) \
 		cargo run -- start-server \
 			-i \
 			/var/log/zypper.log \
@@ -42,6 +44,7 @@ startConfigServer:
 		LOG_DEFAULT_LEVEL=$(LOG_DEFAULT_LEVEL) \
 		LOGFILE_DEFAULT_LEVEL=$(LOGFILE_DEFAULT_LEVEL) \
 		REACT_APP_SHOW_DEBUG_IN_CONSOLE_LOG=true \
+		REACT_APP_HTTP_SERVER_API_KEY=$(HTTP_SERVER_API_KEY) \
     cargo run -- \
 			"start-server" \
 			"-c" \
@@ -56,6 +59,7 @@ startConfigServerSudo:
 		RUST_LOG=$(RUST_LOG) \
 		LOG_DEFAULT_LEVEL=$(LOG_DEFAULT_LEVEL) \
 		LOGFILE_DEFAULT_LEVEL=$(LOGFILE_DEFAULT_LEVEL) \
+		REACT_APP_HTTP_SERVER_API_KEY=$(HTTP_SERVER_API_KEY) \
 		target/debug/actixweb4-starter \
 			"start-server" \
 			"-c" \

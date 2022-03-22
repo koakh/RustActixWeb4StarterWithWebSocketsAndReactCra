@@ -5,7 +5,9 @@
     "**/.git/objects/**": true,
     "**/.git/subtree-cache/**": true,
     "**/node_modules/*/**": true,
-    ".flatpak": true
+    ".flatpak": true,
+    ".flatpak/**": true,
+    "_build/**": true
   },
   "cSpell.words": [
     "actix",
@@ -20,9 +22,11 @@
     "pathbuf",
     "Postbackup",
     "rsyslog",
+    "rtype",
     "structopt",
     "syncthing",
     "tailwindcss",
+    "threadpool",
     "websockets"
   ]
 }
