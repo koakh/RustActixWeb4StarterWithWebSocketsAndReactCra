@@ -26,7 +26,7 @@ export const getUriHost = (): string => {
  */
 export const getUri = (): string => {
   // PUBLIC_URL comes from default package.json `"homepage":"/update"`
-  return `https://${getUriHost()}${process.env.PUBLIC_URL}/api`
+  return `https://${getUriHost()}${process.env.PUBLIC_URL}`
 };
 
 /**

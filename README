@@ -73,20 +73,33 @@ $ code .
 	fetch = +refs/heads/*:refs/remotes/origin/*
 ```
 
-2. clean up `README` file
+1. clean up `README` file
 
-3. edit Cargo.toml and change `maintainer`, `copyright`, `extended-description`, remove unused crates etc
+2. edit Cargo.toml and change `maintainer`, `copyright`, `extended-description`, remove unused crates etc
 
-4. find and replace all `actixweb4-starter` with from ex `ccard-identity-client`
+3. find and replace all `actixweb4-starter` with from ex `ccard-identity-client`
 
-5. find and replace all `actixweb4_starter` with from ex `ccard_identity_client`
+4. find and replace all `actixweb4_starter` with from ex `ccard_identity_client`
 
-6. find and replace all `8543` with from ex `8643`
+5. find and replace all `8543` with from ex `8643`
 
-7. find and replace all `8545` with from ex `8645` (used only in startReactClient `PORT`)
+6. find and replace all `8545` with from ex `8645` (used only in startReactClient `PORT`)
 
-8. change constants.rs values like `APP_NAME`, `DEFAULT_HTTP_SERVER_URI`, `HTTP_SERVER_API_KEY` and others   
+7. find and replace all `uOtXEZXYslKyB0n3g3xRmCaaNsAwB5KmgFcy1X7bbcbtS9dhOpKuhZ04Mfr2OKGL` with your own apikey
 
-9. change same value in `Makefile`
+8. change `constants.rs` values like `DEFAULT_HTTP_SERVER_API_KEY` and others, or change it in env variables
 
-10. 
+9. change same values in `Makefile`
+
+10. remove Config if will not use json config file\
+    1. remove `src/app/config.rs`
+    2. remove `pub mod config;` and `pub use config::ConfigState;` from `src/app/mod.rs`
+    3. find all `// BOF : UNCOMMENT to use config` and remove all code blocks
+    4. `config::ConfigItem, ConfigState` imports from `use crate::app::{config::ConfigItem, ConfigState, LOG_HEADER_LINE_CHAR, LOG_HEADER_LINE_LEN};`
+    5. remove functions `pub fn get_config_item`, `pub fn get_config_files_from_regex`, `pub fn read_config`, `pub fn get_config_state`
+    6. remove `get_config_state`, from `util::{generate_random_string, get_config_state}` `handlers.rs`
+    7. remove `pub async fn get_config` handler function and `.service(get_config)` on `main.rs`
+    8. remove `pub const CONFIG_FILE_PATH`
+    9. remove `Makefile` `startConfigServer` and `startConfigServerSudo` sections, and remove last config related stuff
+
+11. 

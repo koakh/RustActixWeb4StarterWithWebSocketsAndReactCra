@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { wsConnect } from './utils/ws';
-// must be after wsConnect import to prevent ` Cannot access 'getUri' before initialization`
+// useHttp must be after wsConnect import to prevent ` Cannot access 'getUri' before initialization`
 import { HttpMethod, useHttp } from './hooks';
 import { appConstants as c } from './app/constants';
 
@@ -20,13 +20,13 @@ export const App = () => {
   }
   const pingClickHandler = async () => {
     await sendRequest({
-      url: 'https://localhost:8543/ping',
+      url: `${c.VALUES.apiUrl}/ping`,
       debug: false
     }, transformFunction, errorFunction);
   }
   const wsEchoClickHandler = async () => {
     await sendRequest({
-      url: 'https://localhost:8543/api/ws-echo',
+      url: `${c.VALUES.apiUrl}/api/ws-echo`,
       method: HttpMethod.POST,
       headers: c.VALUES.apiHeaders,
       body: { message: 'hi there' },

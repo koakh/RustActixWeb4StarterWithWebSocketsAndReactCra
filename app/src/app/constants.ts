@@ -1,8 +1,8 @@
-import { getUri, getWsUri } from "../utils/main";
+import { getUri as getApiUri, getUriHost, getWsUri } from "../utils/main";
 
 const VALUES: { [key: string]: any } = {
   appName: 'actixweb4-starter',
-  apiUrl: getUri(),
+  apiUrl: getApiUri(),
   apiUrlWs: getWsUri(),
   apiHeaders: {
     'Content-Type': 'application/json',

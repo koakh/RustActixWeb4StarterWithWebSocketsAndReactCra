@@ -178,8 +178,9 @@ async fn main() -> std::io::Result<()> {
   // check current config
   // out_message(format!("config: {:?}", config), 0);
   // out_message(format!("lines: {:?}", lines), 0);
-  // UNCOMMENT to use config
+  // BOF : UNCOMMENT to use config
   // out_message(format!("initial filters file: '{}', line: '{}'", initial_filter_file.clone(), initial_filter_line.clone()), 0);
+  // EOF : UNCOMMENT to use config
 
   // authentication validator
   // required to implement ResponseError in src/app/errors.rs else we have a error
