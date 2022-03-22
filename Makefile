@@ -3,7 +3,7 @@ SHELL := /bin/bash
 # default only here for quick changes
 HTTP_SERVER_URI := 0.0.0.0:8543
 HTTP_SERVER_API_KEY := uOtXEZXYslKyB0n3g3xRmCaaNsAwB5KmgFcy1X7bbcbtS9dhOpKuhZ04Mfr2OKGL
-# RUST_LOG := trace,actix_server=trace,actix_web=trace
+RUST_LOG := trace,actix_server=trace,actix_web=trace
 LOG_LEVEL=DEBUG
 LOGFILE_LEVEL=DEBUG
 # used to override defaults
@@ -24,9 +24,6 @@ startServer:
 	@RUST_BACKTRACE=full \
     BIND_ADDR=0.0.0.0:$(REACT_APP_PORT_WS) \
 		HTTP_SERVER_URI=$(HTTP_SERVER_URI) \
-		CONFIG_PATH_SSL=$(CONFIG_PATH_SSL) \
-		CERT_FILE_NAME_KEY=$(CERT_FILE_NAME_KEY) \
-		CERT_FILE_NAME_CERT=$(CERT_FILE_NAME_CERT) \
 		REACT_APP_SHOW_DEBUG_IN_CONSOLE_LOG=true \
 		REACT_APP_HTTP_SERVER_API_KEY=$(HTTP_SERVER_API_KEY) \
 		cargo run -- start-server \
@@ -34,6 +31,9 @@ startServer:
 			/var/log/zypper.log \
 			-f "^.*c3-.*.log$$" \
 			-l "(?i)(.*)"
+#		CONFIG_PATH_SSL=$(CONFIG_PATH_SSL) \
+#		CERT_FILE_NAME_KEY=$(CERT_FILE_NAME_KEY) \
+#		CERT_FILE_NAME_CERT=$(CERT_FILE_NAME_CERT) \
 
 # prefered way
 startConfigServer:
@@ -86,9 +86,6 @@ startReactClient:
 deb:
 	@rm app/build -r || true \
 		&& cargo deb -v
-
-pushDeb:
-	@./pushToRemoteRepo.sh $(VERSION)
 
 buildDockerImage:
 	@docker build . -t actixweb4-starter
