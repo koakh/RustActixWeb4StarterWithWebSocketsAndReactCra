@@ -6,6 +6,8 @@ pub struct AppStateResponse {
   pub server_id: usize,
   pub counter: i32,
   pub request_count: usize,
-  pub filter_line: String,
-  pub filter_file: String,
+  // BOF : UNCOMMENT to use config
+  // pub filter_line: String,
+  // pub filter_file: String,
+  // EOF : UNCOMMENT to use config
 }

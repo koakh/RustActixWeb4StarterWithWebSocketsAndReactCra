@@ -23,11 +23,8 @@ pub const API_PATH: &'static str = "/api";
 pub const HTTP_SERVER_KEEP_ALIVE: u64 = 30;
 pub const CONFIG_FILE_PATH: &'static str = "/etc/actixweb4-starter/config.json";
 pub const LOG_FILE_PATH: &'static str = "./actixweb4-starter.log";
-// uncomment to us
+// uncomment to use
 // pub const DEFAULT_RUST_LOG: &'static str = "error,actix_server=error,actix_web=error";
-// misc
-pub const LOG_HEADER_LINE_CHAR: &'static char = &'-';
-pub const LOG_HEADER_LINE_LEN: &'static u8 = &120;
 // files - /static/
 pub const DOWNLOAD_FILES_PATH: &'static str = "./static";
 pub const DOWNLOAD_URI_PATH: &'static str = "/downloads";

@@ -1,3 +1,4 @@
+#![allow(unused_imports)]
 use actix::Addr;
 use actix_multipart::Multipart;
 use actix_web::{
@@ -6,8 +7,7 @@ use actix_web::{
   post, web, Error as ActixError, HttpRequest, HttpResponse, Responder, Result,
 };
 use awc::Client;
-use log::{debug, error};
-#[allow(unused_imports)]
+use log::{debug, error, info};
 use regex::Regex;
 use serde_json::json;
 
@@ -15,7 +15,7 @@ use crate::{
   app::{AppState, AppStateGlobal, ENDPOINT_REDIRECT_TO, RANDOM_STRING_GENERATOR_CHARSET, RANDOM_STRING_GENERATOR_SIZE},
   enums::MessageToClientType,
   requests::{PostAwcUriRequest, PostStateRequest, PostWsEchoRequest},
-  responses::{ApiKeyResponse, AppStateResponse, ErrorMessageResponse, GetStateResponse, MessageResponse, PostStateResponse, PostWsEchoResponse},
+  responses::{ApiKeyResponse, AppStateResponse, GetStateResponse, MessageResponse, PostStateResponse, PostWsEchoResponse},
   server::save_file,
   util::{generate_random_string, get_config_state},
   websocket::{MessageToClient, Server as WebServer},
@@ -112,14 +112,16 @@ pub async fn post_state_full(msg: web::Json<PostStateRequest>, data: web::Data<A
     server_id: data.server_id,
     request_count,
     counter: *counter,
-    filter_file: String::from(&msg.filter_file),
-    filter_line: String::from(&msg.filter_line),
+    // BOF : UNCOMMENT to use config
+    // filter_file: String::from(&msg.filter_file),
+    // filter_line: String::from(&msg.filter_line),
+    // EOF : UNCOMMENT to use config
   }))
 }
 
 /// POST:/filter
 #[post("/state")]
-pub async fn post_state(msg: web::Json<PostStateRequest>, data: web::Data<AppState>, app_data: web::Data<AppStateGlobal>) -> impl Responder /*Result<web::Json<PostFilterResponse>>*/ {
+pub async fn post_state(_msg: web::Json<PostStateRequest>, data: web::Data<AppState>, app_data: web::Data<AppStateGlobal>) -> impl Responder /*Result<web::Json<PostFilterResponse>>*/ {
   // global get counter's MutexGuard
   let mut counter = app_data.counter.lock().unwrap();
   // access counter inside MutexGuard
@@ -146,7 +148,7 @@ pub async fn post_state(msg: web::Json<PostStateRequest>, data: web::Data<AppSta
   //   *filter_line = msg.filter_line.clone();
   //   match Regex::new(msg.filter_line.clone().as_str()) {
   //     Ok(r) => *regex_line = r,
-  //     Err(e) => return HttpResponse::InternalServerError().json(ErrorMessageResponse { message: format!("{}", e) }),
+  //     Err(e) => return HttpResponse::InternalServerError().json(MessageResponse { message: format!("{}", e) }),
   //   }
   // }
   // EOF : UNCOMMENT to use config
@@ -156,11 +158,13 @@ pub async fn post_state(msg: web::Json<PostStateRequest>, data: web::Data<AppSta
   data.request_count.set(request_count);
 
   // output changed filters: leave stdout clean for output filtered log lines only
-  // out_message(format!("filters changed file: {}, line: {}", &msg.filter_file, &msg.filter_line), 0);
+  // info!("filters changed file: {}, line: {}", &msg.filter_file, &msg.filter_line);
 
   HttpResponse::Ok().json(PostStateResponse {
-    filter_file: String::from(&msg.filter_file),
-    filter_line: String::from(&msg.filter_line),
+    // BOF : UNCOMMENT to use config
+    // filter_file: String::from(&msg.filter_file),
+    // filter_line: String::from(&msg.filter_line),
+    // EOF : UNCOMMENT to use config
   })
 }
 
@@ -189,7 +193,7 @@ pub async fn get_config(app_data: web::Data<AppStateGlobal>) -> impl Responder {
   let current_config_file_mutex_guard = app_data.config_file.lock().unwrap();
   match get_config_state(current_config_file_mutex_guard) {
     Ok(c) => HttpResponse::Ok().json(c),
-    Err(e) => HttpResponse::InternalServerError().json(ErrorMessageResponse { message: format!("{:?}", e) }),
+    Err(e) => HttpResponse::InternalServerError().json(MessageResponse { message: format!("{:?}", e) }),
   }
 }
 

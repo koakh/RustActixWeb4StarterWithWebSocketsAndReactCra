@@ -1,5 +1,4 @@
 #![allow(unused_imports)]
-use crate::app::{ConfigItem, ConfigState, LOG_HEADER_LINE_CHAR, LOG_HEADER_LINE_LEN};
 use chrono::{DateTime, Utc};
 use log::{debug, error};
 use rand::Rng;
@@ -12,20 +11,7 @@ use std::io::Read;
 use std::path::{Path, PathBuf};
 use std::sync::MutexGuard;
 
-/// generate a fixed size char line
-pub fn gen_line_char(character: char, width: u8) -> String {
-  let mut buf = String::new();
-  for _ in 0..width {
-    buf.push(character);
-  }
-  buf
-}
-
-/// simple helper, just to prevent extra code lines
-pub fn out_message(message: String, indent: u8) {
-  debug!("{}", &message);
-  println!("{}{}", gen_line_char(' ', indent), &message);
-}
+use crate::app::{ConfigItem, ConfigState};
 
 /// check if file exists
 pub fn file_exists(file_path: &str) -> bool {
@@ -36,15 +22,6 @@ pub fn file_exists(file_path: &str) -> bool {
 /// check if path/dir exists
 pub fn _path_exists(path: &str) -> bool {
   Path::new(&path).exists()
-}
-
-pub fn _log_header(content: &str) {
-  let line = gen_line_char(*LOG_HEADER_LINE_CHAR, *LOG_HEADER_LINE_LEN);
-  // let indent = gen_line_char(' ', 30);
-  debug!("{}", line);
-  debug!("{}", content);
-  debug!("{}", line);
-  println!("{}", content);
 }
 
 /// strip trailing newline *nix and windows
@@ -167,12 +144,12 @@ pub fn get_config_files_from_regex(config: &ConfigState, regex: Regex) -> Option
 pub fn generate_random_string(seed: &[u8], size: usize) -> String {
   let mut rng = rand::thread_rng();
 
-  let password: String = (0..size)
+  let random_string: String = (0..size)
     .map(|_| {
       let idx = rng.gen_range(0..seed.len());
       seed[idx] as char
     })
     .collect();
 
-  password
+  random_string
 }

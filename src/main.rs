@@ -40,10 +40,10 @@ use actixweb4_starter::{
   },
   enums::MessageToClientType,
   requests::{PostStateRequest, PostWsEchoRequest},
-  responses::{ApiKeyResponse, AppStateResponse, ErrorMessageResponse, GetStateResponse, MessageResponse, PostStateResponse, PostWsEchoResponse},
+  responses::{ApiKeyResponse, AppStateResponse, GetStateResponse, MessageResponse, PostStateResponse, PostWsEchoResponse},
   server::{get_config, get_state, health_check, not_found, post_state, post_state_full, redirect, test_awc, upload, ws_echo},
   util::{
-    execute_command, execute_command_shortcut, generate_random_string, get_config_files_from_regex, get_config_item, get_config_state, get_current_formatted_date, out_message, pathbuf_to_str,
+    execute_command, execute_command_shortcut, generate_random_string, get_config_files_from_regex, get_config_item, get_config_state, get_current_formatted_date, pathbuf_to_str,
     read_config, read_generic_type, ExecuteCommandOutcome,
   },
   websocket::{ws_index, MessageToClient, Server as WebServer},
@@ -194,7 +194,7 @@ async fn main() -> std::io::Result<()> {
         .map(|data| data.clone())
         .unwrap_or_else(Default::default)
         .scope("urn:example:channel=HBO&urn:example:rating=G,PG-13");
-      out_message("invalid authorization api key".to_string(), 0);
+      error!("{}", "invalid authorization api key".to_string());
       Err(AuthenticationError::from(config).into())
       // with this output unauthorized in response, we keep with silence message and error code 401
       // use actix_web::{error::ErrorUnauthorized};

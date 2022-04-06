@@ -114,3 +114,9 @@ $ code .
     10. run `cargo build` and **remove all non used imports**
 
 11. commit changes after starter cleanup
+
+12. inspect all files and remove unused code
+
+13. optional follow [NOTES_EXTENDED.md](NOTES_EXTENDED.md) if required dead poop postgres setup
+
+14. clean up `client.http` non used requests
