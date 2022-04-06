@@ -7,9 +7,11 @@ pub const DEFAULT_HTTP_SERVER_API_KEY: &'static str = "uOtXEZXYslKyB0n3g3xRmCaaN
 pub const DEFAULT_LOG_LEVEL: &'static str = "ERROR";
 pub const DEFAULT_LOGFILE_LEVEL: &'static str = "ERROR";
 pub const DEFAULT_LOG_ACTIXWEB_MIDDLEWARE_FORMAT: &'static str = r#""%r" %s %b "%{User-Agent}i" %D"#;
-// filters
-pub const DEFAULT_FILTER_FILE: &'static str = r"^.*c3-.*\.log$";
-pub const DEFAULT_FILTER_LINE: &'static str = r"(?i)(.*)";
+// BOF : UNCOMMENT to use config
+// // filters
+// pub const DEFAULT_FILTER_FILE: &'static str = r"^.*c3-.*\.log$";
+// pub const DEFAULT_FILTER_LINE: &'static str = r"(?i)(.*)";
+// EOF : UNCOMMENT to use config
 // certificates
 pub const DEFAULT_CONFIG_PATH_SSL: &'static str = "./config/ssl";
 pub const DEFAULT_CERT_FILE_NAME_KEY: &'static str = "key.pem";

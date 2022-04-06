@@ -1,7 +1,8 @@
 #![allow(unused_imports)]
-use crate::app::{config::ConfigItem, ConfigState, LOG_HEADER_LINE_CHAR, LOG_HEADER_LINE_LEN};
+use crate::app::{ConfigItem, ConfigState, LOG_HEADER_LINE_CHAR, LOG_HEADER_LINE_LEN};
 use chrono::{DateTime, Utc};
 use log::{debug, error};
+use rand::Rng;
 use regex::Regex;
 use serde::{de::DeserializeOwned, Serialize};
 use serde_json::json;
@@ -10,7 +11,6 @@ use std::fs::File;
 use std::io::Read;
 use std::path::{Path, PathBuf};
 use std::sync::MutexGuard;
-use rand::Rng;
 
 /// generate a fixed size char line
 pub fn gen_line_char(character: char, width: u8) -> String {
@@ -137,14 +137,14 @@ pub fn get_config_item(config: &ConfigState, find_key: String) -> Option<ConfigI
     let key = value.key.borrow().as_ref().unwrap().clone().to_string();
     if key.eq(&find_key) {
       return Some(value);
-    }    
+    }
   }
   None
 }
 
 /// get config item from config state and find key
 pub fn get_config_files_from_regex(config: &ConfigState, regex: Regex) -> Option<String> {
-// let match_file_re = ref_regex_file.lock().unwrap().is_match(&line.source().display().to_string());
+  // let match_file_re = ref_regex_file.lock().unwrap().is_match(&line.source().display().to_string());
   let mut result = String::from("");
   let input_files = config.input_files.borrow().as_ref().unwrap().clone();
   for file in input_files {
@@ -168,11 +168,11 @@ pub fn generate_random_string(seed: &[u8], size: usize) -> String {
   let mut rng = rand::thread_rng();
 
   let password: String = (0..size)
-      .map(|_| {
-          let idx = rng.gen_range(0..seed.len());
-          seed[idx] as char
-      })
-      .collect();
+    .map(|_| {
+      let idx = rng.gen_range(0..seed.len());
+      seed[idx] as char
+    })
+    .collect();
 
   password
 }

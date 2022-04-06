@@ -65,12 +65,12 @@ $ cd myNewProject
 $ code .
 ```
 
-1. edit `.git/config` and remove remote origin
+1. edit `.git/config` and remove remote origin or **add a new one**
 
-```
+```config
 [remote "origin"]
-	url = https://github.com/koakh/RustActixWeb4StarterWithWebSocketsAndReactCra.git
-	fetch = +refs/heads/*:refs/remotes/origin/*
+    url = https://github.com/koakh/RustActixWeb4StarterWithWebSocketsAndReactCra.git
+    fetch = +refs/heads/*:refs/remotes/origin/*
 ```
 
 1. clean up `README` file
@@ -87,19 +87,30 @@ $ code .
 
 7. find and replace all `uOtXEZXYslKyB0n3g3xRmCaaNsAwB5KmgFcy1X7bbcbtS9dhOpKuhZ04Mfr2OKGL` with your own apikey
 
-8. change `constants.rs` values like `DEFAULT_HTTP_SERVER_API_KEY` and others, or change it in env variables
+8. change `constants.rs` values like `DEFAULT_HTTP_SERVER_API_KEY` (changed above) and others, or change it in env variables
 
-9. change same values in `Makefile`
+9. change same values in `Makefile` (changed above)
 
 10. remove Config if will not use json config file\
+
     1. remove `src/app/config.rs`
+
     2. remove `pub mod config;` and `pub use config::ConfigState;` from `src/app/mod.rs`
+
     3. find all `// BOF : UNCOMMENT to use config` and remove all code blocks
-    4. `config::ConfigItem, ConfigState` imports from `use crate::app::{config::ConfigItem, ConfigState, LOG_HEADER_LINE_CHAR, LOG_HEADER_LINE_LEN};`
+
+    4. remove `config::ConfigItem, ConfigState` imports from `src/util/util.rs`
+
     5. remove functions `pub fn get_config_item`, `pub fn get_config_files_from_regex`, `pub fn read_config`, `pub fn get_config_state`
-    6. remove `get_config_state`, from `util::{generate_random_string, get_config_state}` `handlers.rs`
-    7. remove `pub async fn get_config` handler function and `.service(get_config)` on `main.rs`
+
+    6. remove `get_config_state`, from import `util::{..., get_config_state}` `handlers.rs`
+
+    7. remove `pub async fn get_config` from `src/server/handlers.rs` and function and `.service(get_config)` on `main.rs`, and all non used imports like `config::ConfigItem`, `ConfigState`, `CONFIG_FILE_PATH`, `get_config`, `get_config_files_from_regex`, `get_config_item`, `get_config_state` and `read_config`
+
     8. remove `pub const CONFIG_FILE_PATH`
+
     9. remove `Makefile` `startConfigServer` and `startConfigServerSudo` sections, and remove last config related stuff
 
-11. 
+    10. run `cargo build` and **remove all non used imports**
+
+11. commit changes after starter cleanup

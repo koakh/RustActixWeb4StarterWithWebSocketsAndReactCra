@@ -1,11 +1,11 @@
-pub mod constants;
-pub mod state;
-pub mod config;
-pub mod sub_commands;
-pub mod logger;
+mod config;
+mod constants;
+mod logger;
+mod state;
+mod sub_commands;
 
+pub use config::{ConfigItem, ConfigState};
 pub use constants::*;
-pub use state::*;
-pub use config::ConfigState;
-pub use sub_commands::Cli;
 pub use logger::init_log4rs;
+pub use state::*;
+pub use sub_commands::Cli;

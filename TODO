@@ -21,6 +21,7 @@ Project:
       ☐ @critical reuse config and parameters with meanful stuff for starter ex `initial filters file: '^.*c3-.*\.log$', line: '(?i)(.*)'`
       ☐ @critical remove config and other c3 and links related stuff, like tailor config
       ☐ ex downloadPath and use downloads
+    ☐ @critical add machine-uid = "0.2.0" and litcrypt = "0.3.0"
   Frontend:
     ✔ tailwind @done(22-03-19 20:01)
     ✔ react useHttp request api button ws-echo and /ping @done(22-03-22 00:38)

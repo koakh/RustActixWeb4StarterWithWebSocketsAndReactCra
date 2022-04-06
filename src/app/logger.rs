@@ -14,16 +14,6 @@ use log4rs::{
 };
 use std::fs;
 
-// default stdout logger
-// pub fn init_log() {
-//   // trace show all, can enable log levels per module ex `RUST_LOG="warn,test::foo=info,test::foo::bar=debug"`
-//   let rust_log = env::var("RUST_LOG").unwrap_or(DEFAULT_RUST_LOG.to_string());
-//   std::env::set_var("RUST_LOG", rust_log);
-//   // // init env logger before anything else and in main
-//   env_logger::init();
-// }
-
-// log4rs logger :shared with c3-updater and actixweb4-starter
 pub fn init_log4rs() -> Result<(), SetLoggerError> {
   let default_log_level = std::env::var("LOG_LEVEL").unwrap_or(DEFAULT_LOG_LEVEL.to_string());
   let default_logfile_level = std::env::var("LOGFILE_LEVEL").unwrap_or(DEFAULT_LOGFILE_LEVEL.to_string());
