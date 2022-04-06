@@ -157,10 +157,14 @@ pub async fn post_state(_msg: web::Json<PostStateRequest>, data: web::Data<AppSt
   let request_count = data.request_count.get() + 1;
   data.request_count.set(request_count);
 
+  // BOF : UNCOMMENT to use config
   // output changed filters: leave stdout clean for output filtered log lines only
   // info!("filters changed file: {}, line: {}", &msg.filter_file, &msg.filter_line);
+  // EOF : UNCOMMENT to use config
 
   HttpResponse::Ok().json(PostStateResponse {
+    // dereferences MutexGuard
+    counter: *counter,
     // BOF : UNCOMMENT to use config
     // filter_file: String::from(&msg.filter_file),
     // filter_line: String::from(&msg.filter_line),
