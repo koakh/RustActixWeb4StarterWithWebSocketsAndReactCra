@@ -183,11 +183,13 @@ pub async fn get_state(app_data: web::Data<AppStateGlobal>) -> Result<web::Json<
   }
 
   Ok(web::Json(GetStateResponse {
+    // dereferences MutexGuard
+    counter: *app_data.counter.lock().unwrap(),
+    config_file: config_file.to_string(),
     // BOF : UNCOMMENT to use config
     // filter_file: app_data.filter_file.lock().unwrap().to_string(),
     // filter_line: app_data.filter_line.lock().unwrap().to_string(),
     // EOF : UNCOMMENT to use config
-    config_file: config_file.to_string(),
   }))
 }
 

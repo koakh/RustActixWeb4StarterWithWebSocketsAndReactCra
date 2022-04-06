@@ -26,11 +26,12 @@ startServer:
 		HTTP_SERVER_URI=$(HTTP_SERVER_URI) \
 		REACT_APP_SHOW_DEBUG_IN_CONSOLE_LOG=true \
 		REACT_APP_HTTP_SERVER_API_KEY=$(HTTP_SERVER_API_KEY) \
-		cargo run -- start-server \
-			-i \
-			/var/log/zypper.log \
-			-f "^.*c3-.*.log$$" \
-			-l "(?i)(.*)"
+		cargo run -- start-server 
+# BOF : UNCOMMENT to use config		
+#			-i /var/log/zypper.log \
+#			-f "^.*c3-.*.log$$" \
+#			-l "(?i)(.*)"
+# EOF : UNCOMMENT to use config			
 #		CONFIG_PATH_SSL=$(CONFIG_PATH_SSL) \
 #		CERT_FILE_NAME_KEY=$(CERT_FILE_NAME_KEY) \
 #		CERT_FILE_NAME_CERT=$(CERT_FILE_NAME_CERT) \
